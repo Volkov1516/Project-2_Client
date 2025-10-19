@@ -270,8 +270,6 @@ export const SidebarContentProjects = () => {
           {outputTree.map((item, index) => (
             <Tree key={index} item={item} />
           ))}
-
-          <SidebarDialogCreateProject createProject={createProject} />
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
