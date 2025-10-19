@@ -1,15 +1,7 @@
-import { useState } from "react"
-
 import {
   useGetProjectsQuery,
-  useCreateProjectMutation,
-  useUpdateProjectMutation,
-  useDeleteProjectMutation,
   useGetComponentsQuery,
-  useCreateComponentMutation,
-  useUpdateComponentMutation,
-  useDeleteComponentMutation,
-} from "../features/projects/projectsApiSlice"
+} from "../../features/projects/projectsApiSlice"
 
 import {
   SidebarGroup,
@@ -19,7 +11,6 @@ import {
 } from "@/components/ui/sidebar"
 
 import { Tree } from "./sidebar-tree"
-import { SidebarDialogCreateProject } from "@/components/sidebar-dialog-create-project"
 
 export const SidebarContentProjects = () => {
   const {
@@ -27,18 +18,12 @@ export const SidebarContentProjects = () => {
     isLoading: isProjectLoading,
     error: projectError,
   } = useGetProjectsQuery()
-  const [createProject] = useCreateProjectMutation()
-  const [updateProject] = useUpdateProjectMutation()
-  const [deleteProject] = useDeleteProjectMutation()
 
   const {
     data: components,
     isLoading: isComponentsLoading,
     error: componentsError,
   } = useGetComponentsQuery()
-  const [createComponent] = useCreateComponentMutation()
-  const [updateComponent] = useUpdateComponentMutation()
-  const [deleteComponent] = useDeleteComponentMutation()
 
   if (isProjectLoading || isComponentsLoading) {
     return <div>Загрузка...</div>
@@ -215,52 +200,6 @@ export const SidebarContentProjects = () => {
   }
 
   const outputTree = transformToProjectTree(finalStructure)
-
-  console.log("Финальная структура в виде массива-дерева:")
-  console.log(JSON.stringify(outputTree, null, 2))
-
-  const handleUpdateProject = async (id: string, name: string) => {
-    try {
-      await updateProject({ id, data: { name: `Updated ${name}` } }).unwrap()
-    } catch (err) {
-      console.error("Ошибка при обновлении проекта:", err)
-    }
-  }
-
-  const handleDeleteProject = async (id: string) => {
-    try {
-      await deleteProject(id).unwrap()
-    } catch (err) {
-      console.error("Ошибка при удалении проекта:", err)
-    }
-  }
-
-  const handleCreateComponent = async (id: string) => {
-    try {
-      await createComponent({
-        name: `Component ${String(Date.now())}`,
-        projectId: id,
-      }).unwrap()
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const handleUpdateComponent = async (id: string, name: string) => {
-    try {
-      await updateComponent({ id, data: { name: `Updated ${name}` } }).unwrap()
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const handleDeleteComponent = async (id: string) => {
-    try {
-      await deleteComponent(id).unwrap()
-    } catch (err) {
-      console.error(err)
-    }
-  }
 
   return (
     <SidebarGroup>

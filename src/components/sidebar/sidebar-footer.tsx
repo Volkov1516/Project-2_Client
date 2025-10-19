@@ -3,8 +3,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-} from "./ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+} from "../ui/sidebar"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 import { Settings, Info } from "lucide-react"
 

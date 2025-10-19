@@ -1,4 +1,4 @@
-import { Sidebar, SidebarContent } from "./ui/sidebar"
+import { Sidebar, SidebarContent } from "../ui/sidebar"
 
 import { SidebarContentHeader } from "./sidebar-header"
 import { SidebarContentFooter } from "./sidebar-footer"

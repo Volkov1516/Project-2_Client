@@ -3,7 +3,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "./ui/sidebar"
+} from "../ui/sidebar"
 import { Command } from "lucide-react"
 
 export const SidebarContentHeader = () => {

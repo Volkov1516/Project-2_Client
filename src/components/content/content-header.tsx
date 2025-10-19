@@ -1,4 +1,4 @@
-import { SidebarTrigger } from "./ui/sidebar"
+import { SidebarTrigger } from "../ui/sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,8 +6,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "./ui/breadcrumb"
-import { Separator } from "./ui/separator"
+} from "../ui/breadcrumb"
+import { Separator } from "../ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const ContentHeader = () => {

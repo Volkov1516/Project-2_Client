@@ -1,4 +1,4 @@
-import { useCreateProjectMutation } from "../features/projects/projectsApiSlice"
+import { useCreateProjectMutation } from "../../features/projects/projectsApiSlice"
 
 import {
   SidebarGroup,
@@ -6,7 +6,7 @@ import {
   SidebarMenu,
 } from "@/components/ui/sidebar"
 
-import { SidebarDialogCreateProject } from "@/components/sidebar-dialog-create-project"
+import { SidebarDialogCreateProject } from "@/components/sidebar/sidebar-dialog-create-project"
 
 export const SidebarContentProjectsNew = () => {
   const [createProject] = useCreateProjectMutation()

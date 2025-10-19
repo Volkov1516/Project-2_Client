@@ -5,7 +5,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "./ui/sidebar"
+} from "../ui/sidebar"
 
 import { Star } from "lucide-react"
 
