@@ -1,9 +1,15 @@
+import { SidebarProvider, SidebarInset } from "./components/ui/sidebar"
+
 import { AppSidebar } from "./components/app-sidebar"
+import { AppContent } from "./components/app-content"
 
 export const App = () => {
   return (
-    <div className="h-screen w-screen">
+    <SidebarProvider>
       <AppSidebar />
-    </div>
+      <SidebarInset>
+        <AppContent />
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
