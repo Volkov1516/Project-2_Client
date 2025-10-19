@@ -12,13 +12,13 @@ import { Star } from "lucide-react"
 export const Favorites = () => {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Favorities</SidebarGroupLabel>
+      <SidebarGroupLabel className="select-none">Favorities</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
               <Star />
-              <span>Component</span>
+              <span className="select-none">Marketing</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
