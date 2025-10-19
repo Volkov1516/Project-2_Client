@@ -3,11 +3,11 @@ import {
   useGetComponentsQuery,
 } from "../../../features/projects/projectsApiSlice"
 
+import { Label } from "./Label"
 import { Tree } from "./Tree"
 
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarGroupContent,
   SidebarMenu,
 } from "@/components/ui/sidebar"
@@ -45,7 +45,7 @@ export const Projects = () => {
 
   return (
     <SidebarGroup className="overflow-y-auto">
-      <SidebarGroupLabel className="select-none">Projects</SidebarGroupLabel>
+      <Label />
       <SidebarGroupContent className="overflow-x-auto">
         <SidebarMenu>
           {outputTree.map((item, index) => (

@@ -4,7 +4,6 @@ import { Header } from "./Header"
 import { Footer } from "./Footer"
 import { Favorites } from "./Favorites"
 import { Projects } from "./projects/Projects"
-import { CreateNew } from "./CreateNew"
 
 export const AppSidebar = () => {
   return (
@@ -13,7 +12,6 @@ export const AppSidebar = () => {
       <SidebarContent>
         <Favorites />
         <Projects />
-        <CreateNew />
       </SidebarContent>
       <Footer />
     </Sidebar>
