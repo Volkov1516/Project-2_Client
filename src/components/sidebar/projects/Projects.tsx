@@ -202,7 +202,7 @@ export const Projects = () => {
   const outputTree = transformToProjectTree(finalStructure)
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className="overflow-y-auto">
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarGroupContent className="overflow-x-scroll">
         <SidebarMenu>

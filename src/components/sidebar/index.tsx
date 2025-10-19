@@ -10,7 +10,7 @@ export const AppSidebar = () => {
   return (
     <Sidebar>
       <Header />
-      <SidebarContent className="overflow-y-auto overflow-x-auto">
+      <SidebarContent>
         <Favorites />
         <Projects />
         <CreateNew />
