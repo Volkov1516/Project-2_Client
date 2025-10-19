@@ -4,7 +4,7 @@ import {
   useCreateComponentMutation,
   useUpdateComponentMutation,
   useDeleteComponentMutation,
-} from "../../features/projects/projectsApiSlice"
+} from "../../../features/projects/projectsApiSlice"
 
 import {
   DropdownMenu,

@@ -6,7 +6,7 @@ import {
 } from "../ui/sidebar"
 import { Command } from "lucide-react"
 
-export const SidebarContentHeader = () => {
+export const Header = () => {
   return (
     <SidebarHeader>
       <SidebarMenu>

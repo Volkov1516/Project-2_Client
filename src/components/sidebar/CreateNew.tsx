@@ -6,9 +6,9 @@ import {
   SidebarMenu,
 } from "@/components/ui/sidebar"
 
-import { SidebarDialogCreateProject } from "@/components/sidebar/sidebar-dialog-create-project"
+import { SidebarDialogCreateProject } from "@/components/sidebar/projects/sidebar-dialog-create-project"
 
-export const SidebarContentProjectsNew = () => {
+export const CreateNew = () => {
   const [createProject] = useCreateProjectMutation()
 
   return (

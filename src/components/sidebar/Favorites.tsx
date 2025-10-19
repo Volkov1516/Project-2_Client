@@ -9,7 +9,7 @@ import {
 
 import { Star } from "lucide-react"
 
-export const SidebarContentFavorites = () => {
+export const Favorites = () => {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Favorities</SidebarGroupLabel>

@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 import { Settings, Info } from "lucide-react"
 
-export const SidebarContentFooter = () => {
+export const Footer = () => {
   return (
     <SidebarFooter>
       <SidebarMenu>

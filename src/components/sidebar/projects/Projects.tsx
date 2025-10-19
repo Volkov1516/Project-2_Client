@@ -1,7 +1,7 @@
 import {
   useGetProjectsQuery,
   useGetComponentsQuery,
-} from "../../features/projects/projectsApiSlice"
+} from "../../../features/projects/projectsApiSlice"
 
 import {
   SidebarGroup,
@@ -12,7 +12,7 @@ import {
 
 import { Tree } from "./sidebar-tree"
 
-export const SidebarContentProjects = () => {
+export const Projects = () => {
   const {
     data: projects,
     isLoading: isProjectLoading,

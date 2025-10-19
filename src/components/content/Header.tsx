@@ -10,7 +10,7 @@ import {
 import { Separator } from "../ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export const ContentHeader = () => {
+export const Header = () => {
   return (
     <div className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
