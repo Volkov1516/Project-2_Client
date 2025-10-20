@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux"
-import { setActiveItem } from "../../../features/projects/projectsSlice" // 👈 Импорт исправленного action
+import { setActiveItem } from "../../../features/projects/projectsSlice"
 
 import { Dropdown } from "./Dropdown"
 
@@ -16,25 +16,17 @@ export const Tree = ({ item, activeItemId }) => {
   let info, items
 
   if (Array.isArray(item)) {
-    // Элемент - это массив:
-    // info = item[0] (объект {id, name}),
-    // items = item.slice(1) (массив детей)
     info = item[0]
     items = item.slice(1)
   } else {
-    // Элемент - это объект (Лист):
     info = item
     items = []
   }
 
-  // Прямой доступ к ID и Name
-  const { id, name, type, projectId } = info // 👈 ID и Name получены!
+  const { id, name, type, projectId } = info
 
   const handleItemClick = () => {
-    // Диспетчеризуем ID текущего элемента
     dispatch(setActiveItem(id))
-    // ❗ Дополнительная логика: если это папка, возможно, тут нужно toggle collapsible,
-    // но CollapsibleTrigger обычно делает это автоматически.
   }
   const isActive = id === activeItemId
 
@@ -53,7 +45,6 @@ export const Tree = ({ item, activeItemId }) => {
         onClick={handleItemClick}
         className="w-[239px] truncate overflow-hidden whitespace-nowrap pr-6 group relative group/item"
       >
-        {/*<Component />*/}
         <Icon />
         <span className="truncate overflow-hidden whitespace-nowrap select-none">
           {name}
@@ -65,7 +56,6 @@ export const Tree = ({ item, activeItemId }) => {
 
   return (
     <Collapsible
-      // className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
       className="group/collapsible"
       defaultOpen={name === "components" || name === "ui"}
     >
@@ -75,7 +65,6 @@ export const Tree = ({ item, activeItemId }) => {
           onClick={handleItemClick}
           className="w-[239px] truncate overflow-hidden whitespace-nowrap pr-6 group relative group/item"
         >
-          {/*<ChevronRight />*/}
           <Icon />
           <span className="truncate overflow-hidden whitespace-nowrap select-none">
             {name}

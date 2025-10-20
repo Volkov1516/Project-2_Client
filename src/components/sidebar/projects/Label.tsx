@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label as InputLabel } from "@/components/ui/label" // Переименовали Label для избежания конфликта
+import { Label as InputLabel } from "@/components/ui/label"
 
 import { Plus } from "lucide-react"
 

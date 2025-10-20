@@ -159,7 +159,6 @@ export const Dropdown = ({ id, type, projectId }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
       <Dialog open={isUpdateOpen} onOpenChange={toggleUpdate}>
         <DialogTrigger asChild></DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
@@ -187,7 +186,6 @@ export const Dropdown = ({ id, type, projectId }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={isCreateOpen} onOpenChange={toggleCreate}>
         <DialogTrigger asChild></DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
@@ -215,7 +213,6 @@ export const Dropdown = ({ id, type, projectId }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       <Dialog open={isDeleteOpen} onOpenChange={toggleDelete}>
         <DialogTrigger asChild></DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
