@@ -21,7 +21,9 @@ export const transformToProjectTree = finalStructure => {
 
     // 2. Преобразуем все корневые компоненты проекта
     // transformComponent возвращает либо {id, name} (лист), либо [ {id, name}, ...дети ] (узел).
-    const transformedComponents = project.components.map(transformComponent)
+    const transformedComponents = project.components.map(component =>
+      transformComponent(component, project.id),
+    )
 
     // 3. Формируем итоговый элемент проекта:
     // [ projectInfo, component1, component2, ... ]
