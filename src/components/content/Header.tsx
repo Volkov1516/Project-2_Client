@@ -10,7 +10,11 @@ import {
 import { Separator } from "../ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export const Header = () => {
+export const Header = ({ activeView, setActiveView }) => {
+  const handleTabChange = value => {
+    setActiveView(value)
+  }
+
   return (
     <div className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
@@ -29,11 +33,19 @@ export const Header = () => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Tabs defaultValue="kanban" className="w-fit ml-auto">
+      <Tabs
+        value={activeView}
+        onValueChange={handleTabChange}
+        className="w-fit ml-auto"
+      >
         <TabsList>
+          <TabsTrigger value="analytics" disabled>
+            Analytics
+          </TabsTrigger>
           <TabsTrigger value="kanban">Kanban</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="members">Members</TabsTrigger>
+          <TabsTrigger value="members" disabled>
+            Members
+          </TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
       </Tabs>
