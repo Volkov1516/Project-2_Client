@@ -4,6 +4,7 @@ const transformComponent = (component: ComponentType, projectId: string) => {
   const componentInfo = {
     id: component.id,
     name: component.name,
+    telegramKey: component.telegramkey,
     type: "component",
     projectId: projectId,
   }

@@ -3,7 +3,7 @@ export type ComponentType = {
   projectid: string
   parentid?: string
   name: string
-  telegramkey?: string
+  telegramkey?: string | null
 }
 
 export type ComponentsType = ComponentType[]

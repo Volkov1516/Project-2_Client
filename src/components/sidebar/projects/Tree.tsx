@@ -26,7 +26,7 @@ export const Tree = ({ item, activeItemId }) => {
   const { id, name, type, projectId } = info
 
   const handleItemClick = () => {
-    dispatch(setActiveItem(id))
+    dispatch(setActiveItem(item))
   }
   const isActive = id === activeItemId
 

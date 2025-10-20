@@ -16,6 +16,7 @@ export type Component = {
 export type ProjectsState = {
   selectedProjectId: number | null
   activeItemId: string | null
+  activeItemTelegramKey?: string | null
 }
 
 export type UpdateProjectArgs = {
