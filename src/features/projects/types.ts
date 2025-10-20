@@ -8,6 +8,8 @@ export type Project = {
 export type Component = {
   id: number
   projectId: string
+  parentId?: string
+  telegramKey?: string
   name: string
 }
 
