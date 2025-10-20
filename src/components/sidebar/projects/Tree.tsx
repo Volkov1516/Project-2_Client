@@ -28,7 +28,7 @@ export const Tree = ({ item, activeItemId }) => {
   }
 
   // Прямой доступ к ID и Name
-  const { id, name, type } = info // 👈 ID и Name получены!
+  const { id, name, type, projectId } = info // 👈 ID и Name получены!
 
   const handleItemClick = () => {
     // Диспетчеризуем ID текущего элемента
@@ -58,7 +58,7 @@ export const Tree = ({ item, activeItemId }) => {
         <span className="truncate overflow-hidden whitespace-nowrap select-none">
           {name}
         </span>
-        <Dropdown id={id} type={type} />
+        <Dropdown id={id} type={type} projectId={projectId} />
       </SidebarMenuButton>
     )
   }
@@ -80,7 +80,7 @@ export const Tree = ({ item, activeItemId }) => {
           <span className="truncate overflow-hidden whitespace-nowrap select-none">
             {name}
           </span>
-          <Dropdown id={id} type={type} />
+          <Dropdown id={id} type={type} projectId={projectId} />
         </SidebarMenuButton>
       </CollapsibleTrigger>
       <CollapsibleContent>
