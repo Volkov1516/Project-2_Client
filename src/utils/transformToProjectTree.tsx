@@ -1,51 +1,33 @@
 import { transformComponent } from "./transformComponent"
 
 /**
- * Преобразует итоговый массив проектов в требуемую структуру.
- * @param {Array} finalStructure Массив объектов проектов, содержащих поле components.
- * @returns {Array} Массив, имитирующий файловую структуру.
+ * Преобразует итоговую структуру проектов в формат, готовый для рендеринга компонентом Tree.
+ * * Формат: [ {id, name, type}, item1, item2, ... ]
+ * item1, item2 могут быть либо листом ({id, name}), либо узлом ([{id, name}, subitem1, ...]).
+ * * @param {Array<Project>} finalStructure Массив объектов проектов, содержащих поле components.
+ * @returns {Array<Array>} Массив, имитирующий файловую структуру, готовую для рендеринга.
  */
 export const transformToProjectTree = finalStructure => {
   const tree = []
 
   // Итерация по каждому проекту
   finalStructure.forEach(project => {
-    const projectContents = []
+    // 1. Создаем объект информации о самом проекте (для вывода в заголовке)
+    const projectInfo = {
+      id: project.id, // ID Проекта
+      name: project.name,
+      type: "project",
+    }
 
-    // Преобразование корневых компонентов проекта
-    project.components.forEach(rootComponent => {
-      // Каждый корневой компонент преобразуется с помощью рекурсивной функции
-      const transformedComponent = transformComponent(rootComponent)
+    // 2. Преобразуем все корневые компоненты проекта
+    // transformComponent возвращает либо {id, name} (лист), либо [ {id, name}, ...дети ] (узел).
+    const transformedComponents = project.components.map(transformComponent)
 
-      // Внимание: если transformComponent вернул массив, его содержимое нужно "раскрыть"
-      // чтобы оно соответствовало целевому формату
-      if (
-        Array.isArray(transformedComponent) &&
-        transformedComponent.length > 1
-      ) {
-        // Если это компонент-каталог, добавляем его содержимое в projectContents
-        // Проверка 2: Убедиться, что потомки не пустой массив
-        const descendants = transformedComponent.slice(1)
-        const hasDescendants =
-          descendants.length > 0 &&
-          !(Array.isArray(descendants[0]) && descendants[0].length === 0)
+    // 3. Формируем итоговый элемент проекта:
+    // [ projectInfo, component1, component2, ... ]
+    const projectItem = [projectInfo, ...transformedComponents]
 
-        if (hasDescendants) {
-          // Если есть потомки, раскрываем их
-          projectContents.push(transformedComponent[0], ...descendants)
-        } else {
-          // Если потомков нет, добавляем только имя (как будто это был лист)
-          projectContents.push(transformedComponent[0])
-        }
-      } else {
-        // Если это компонент-лист, просто добавляем его название
-        projectContents.push(transformedComponent)
-      }
-    })
-
-    // Формирование итогового элемента для проекта: [название_проекта, [содержимое...]]
-    // Примечание: Ваш целевой формат [ "название", [ содержимое ] ]
-    tree.push([project.name, projectContents])
+    tree.push(projectItem)
   })
 
   return tree

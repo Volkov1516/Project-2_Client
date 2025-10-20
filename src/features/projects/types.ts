@@ -13,6 +13,7 @@ export type Component = {
 
 export type ProjectsState = {
   selectedProjectId: number | null
+  activeItemId: string | null
 }
 
 export type UpdateProjectArgs = {

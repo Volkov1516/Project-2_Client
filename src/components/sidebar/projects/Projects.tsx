@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux"
+import { selectActiveItemId } from "../../../features/projects/projectsSlice"
+
 import {
   useGetProjectsQuery,
   useGetComponentsQuery,
@@ -17,6 +20,7 @@ import { mergeProjectsAndComponents } from "../../../utils/mergeProjectsAndCompo
 import { transformToProjectTree } from "../../../utils/transformToProjectTree"
 
 export const Projects = () => {
+  const activeItemId = useSelector(selectActiveItemId)
   const {
     data: projects,
     isLoading: isProjectLoading,
@@ -38,10 +42,8 @@ export const Projects = () => {
   }
 
   const componentTree = buildComponentTree(components)
-  console.log("Component Tree:", componentTree)
   const finalStructure = mergeProjectsAndComponents(projects, componentTree)
   const outputTree = transformToProjectTree(finalStructure)
-  console.log("Output Tree:", outputTree)
 
   return (
     <SidebarGroup className="overflow-y-auto">
@@ -49,7 +51,7 @@ export const Projects = () => {
       <SidebarGroupContent className="overflow-x-auto">
         <SidebarMenu>
           {outputTree.map((item, index) => (
-            <Tree key={index} item={item} />
+            <Tree key={index} item={item} activeItemId={activeItemId} />
           ))}
         </SidebarMenu>
       </SidebarGroupContent>

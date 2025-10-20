@@ -4,10 +4,15 @@
  * @returns {Array|string} Массив или строка, представляющие компонент в виде "файловой" структуры.
  */
 export const transformComponent = component => {
+  const componentInfo = {
+    id: component.id,
+    name: component.name,
+    type: "component",
+  }
   // Если у компонента нет потомков, он считается "листом" (как файл или конечный компонент)
   if (!component.children || component.children.length === 0) {
     // В вашем примере "файлы" - это просто строки
-    return component.name
+    return componentInfo
   }
 
   // Если у компонента есть потомки, он считается "каталогом"
@@ -46,5 +51,5 @@ export const transformComponent = component => {
 
   // Чтобы соответствовать целевому формату [ "название", [ содержимое ] ]
   // где содержимое - это массив, сделаем так:
-  return [component.name, filteredChildren]
+  return [componentInfo, ...transformedChildren]
 }

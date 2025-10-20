@@ -16,13 +16,21 @@ import {
 import { SidebarMenuAction } from "@/components/ui/sidebar"
 import { MoreHorizontal, Trash2, Star, Plus, Pencil } from "lucide-react"
 
-export const Dropdown = () => {
+export const Dropdown = ({ id, type }) => {
   const [updateProject] = useUpdateProjectMutation()
   const [deleteProject] = useDeleteProjectMutation()
 
   const [createComponent] = useCreateComponentMutation()
   const [updateComponent] = useUpdateComponentMutation()
   const [deleteComponent] = useDeleteComponentMutation()
+
+  const handleDelete = (id, type) => {
+    if (type === "project") {
+      handleDeleteProject(id)
+    } else {
+      handleDeleteComponent(id)
+    }
+  }
 
   const handleUpdateProject = async (id: string, name: string) => {
     try {
@@ -79,12 +87,12 @@ export const Dropdown = () => {
         </SidebarMenuAction>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 rounded-lg">
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => console.log(type)}>
           <Star className="text-muted-foreground" />
           <span>Add To Favorites</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleCreateComponent(id)}>
           <Plus className="text-muted-foreground" />
           <span>New Component</span>
         </DropdownMenuItem>
@@ -93,7 +101,7 @@ export const Dropdown = () => {
           <span>Rename</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleDelete(id, type)}>
           <Trash2 className="text-muted-foreground" />
           <span>Delete</span>
         </DropdownMenuItem>
