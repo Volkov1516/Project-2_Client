@@ -1,9 +1,15 @@
 export type ComponentType = {
   id: string
-  projectId: string
-  parentId?: string
+  projectid: string
+  parentid?: string
   name: string
-  telegramKey?: string
+  telegramkey?: string
 }
 
 export type ComponentsType = ComponentType[]
+
+export type ComponentTreeNodeType = ComponentType & {
+  children: ComponentTreeNodeType[]
+}
+
+export type ComponentMapType = Record<string, ComponentTreeNodeType>

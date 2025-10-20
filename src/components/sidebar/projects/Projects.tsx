@@ -15,9 +15,8 @@ import {
   SidebarMenu,
 } from "@/components/ui/sidebar"
 
-import { buildComponentTree } from "../../../utils/buildComponentTree"
-import { mergeProjectsAndComponents } from "../../../utils/mergeProjectsAndComponents"
-import { transformToProjectTree } from "../../../utils/transformToProjectTree"
+import { buildProjectTree } from "../../../utils/buildProjectTree"
+import { buildSidebarTree } from "../../../utils/buildSidebarTree"
 
 export const Projects = () => {
   const activeItemId = useSelector(selectActiveItemId)
@@ -41,9 +40,8 @@ export const Projects = () => {
     return <div>Error...</div>
   }
 
-  const componentTree = buildComponentTree(components)
-  const finalStructure = mergeProjectsAndComponents(projects, componentTree)
-  const outputTree = transformToProjectTree(finalStructure)
+  const finalStructure = buildProjectTree(projects, components)
+  const outputTree = buildSidebarTree(finalStructure)
 
   return (
     <SidebarGroup className="overflow-y-auto">
