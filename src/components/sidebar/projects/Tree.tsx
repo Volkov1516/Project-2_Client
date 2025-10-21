@@ -26,7 +26,7 @@ export const Tree = ({ item, activeItemId }) => {
   const { id, name, type, projectId } = info
 
   const handleItemClick = () => {
-    dispatch(setActiveItem(item))
+    dispatch(setActiveItem({ id, telegramKey: info.telegramKey }))
   }
   const isActive = id === activeItemId
 
