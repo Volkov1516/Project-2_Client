@@ -6,7 +6,7 @@ import {
 } from "@/features/projects/projectsSlice"
 
 import { Header } from "./Header"
-import { Kanban } from "./Kanban"
+import { Kanban } from "./kanban"
 import { Settings } from "./Settings"
 import { Members } from "./Members"
 import { Analytics } from "./Analytics"

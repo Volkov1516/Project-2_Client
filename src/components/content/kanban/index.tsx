@@ -1,6 +1,8 @@
 import { useSelector } from "react-redux"
 import { selectActiveItemTelegramKey } from "@/features/projects/projectsSlice"
 
+import { Column } from "./Column"
+
 import {
   Empty,
   EmptyDescription,
@@ -34,9 +36,9 @@ export const Kanban = () => {
     <div className="flex-1 overflow-y-auto p-4">
       <div className="flex flex-col h-full gap-4">
         <div className="grid gap-4 md:grid-cols-3 flex-1">
-          <div className="bg-muted/50 rounded-xl h-full" />
-          <div className="bg-muted/50 rounded-xl h-full" />
-          <div className="bg-muted/50 rounded-xl h-full" />
+          <Column name="Thread" />
+          <Column name="Active" />
+          <Column name="Done" />
         </div>
       </div>
     </div>
