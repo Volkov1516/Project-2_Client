@@ -1,6 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
-import { selectActiveItemTelegramKey } from "@/features/projects/projectsSlice"
+import {
+  selectActiveItemId,
+  selectActiveItemTelegramKey,
+} from "@/features/projects/projectsSlice"
 import {
   DndContext,
   DragOverlay,
@@ -16,6 +19,13 @@ import { Column } from "./Column"
 import { CardComponent } from "./Card"
 
 import {
+  // ✅ ИСПРАВЛЕНИЕ: Используем более точное имя хука (если оно было изменено в requestsApiSlice)
+  // Если вы не меняли имя в apiSlice, используйте useGetColumnsQuery
+  useGetColumnsQuery,
+  useGetCardsQuery,
+} from "@/features/requests/requestsApiSlice"
+
+import {
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -24,28 +34,48 @@ import {
 } from "@/components/ui/empty"
 import { Kanban as Icon } from "lucide-react"
 
+// 💡 КОНСТАНТА ДЛЯ КОЛОНКИ ПО УМОЛЧАНИЮ
+const DEFAULT_THREAD_COLUMN = {
+  id: "thread",
+  name: "Thread",
+  cards: [],
+}
+
 export const Kanban = () => {
+  // ------------------------------------------------------------------------
+  // ✅ 1. ВСЕ ВЫЗОВЫ ХУКОВ ДОЛЖНЫ БЫТЬ ВНАЧАЛЕ! (Исправляет ошибку Uncaught Error: Rendered fewer hooks)
+  // ------------------------------------------------------------------------
+
+  // Хуки Redux
+  const activeItemId = useSelector(selectActiveItemId)
   const activeItemTelegramKey = useSelector(selectActiveItemTelegramKey)
 
-  const [columns, setColumns] = useState([
-    {
-      id: 1,
-      name: "Thread",
-      cards: [
-        { id: 11, text: "First" },
-        { id: 12, text: "First-Two" },
-      ],
-    },
-    { id: 2, name: "Active", cards: [{ id: 21, text: "Second" }] },
-    { id: 3, name: "Done", cards: [{ id: 31, text: "Third" }] },
-  ])
+  // Хуки RTK Query
+  const {
+    data: columns,
+    isLoading: isColumnsLoading,
+    error: columnsError,
+  } = useGetColumnsQuery(
+    // ✅ Добавляем ! для устранения ошибки TypeScript (ts 2345)
+    activeItemId!,
+    { skip: !activeItemId },
+  )
 
+  const {
+    data: cards,
+    isLoading: isCardsLoading,
+    error: cardsError,
+  } = useGetCardsQuery(
+    // ✅ Добавляем ! для устранения ошибки TypeScript (ts 2345)
+    activeItemId!,
+    { skip: !activeItemId },
+  )
+
+  // Хуки useState
+  const [kanbanData, setKanbanData] = useState([]) // Основное состояние DND
   const [activeId, setActiveId] = useState()
 
-  const activeItemData = activeId
-    ? columns.flatMap(col => col.cards).find(card => card.id === activeId)
-    : null
-
+  // Хуки Dnd-kit
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -53,166 +83,66 @@ export const Kanban = () => {
     }),
   )
 
-  function findContainer(id) {
-    const container = columns.find(
-      column => column.id === id || column.name === id,
-    )
-    if (container) {
-      return container.id // Возвращаем ID колонки
-    }
+  // ------------------------------------------------------------------------
+  // ✅ 2. useEffect для синхронизации и структурирования данных
+  // ------------------------------------------------------------------------
+  useEffect(() => {
+    let finalColumns = [] // 1. Определяем, какие колонки мы будем использовать
+    if (columns && columns.length > 0) {
+      // Ищем, есть ли колонка "thread" среди данных с сервера
+      const serverThreadColumn = columns.find(
+        col => col.id === DEFAULT_THREAD_COLUMN.id,
+      ) // Если колонка "thread" пришла с сервера, используем ее и добавляем остальные
 
-    // 2. Ищем ID карточки внутри массива 'cards' каждой колонки
-    const columnWithCard = columns.find(column =>
-      column.cards.some(card => card.id === id),
-    )
-
-    if (columnWithCard) {
-      return columnWithCard.id // Возвращаем ID колонки, содержащей карточку
-    }
-
-    return undefined // Ничего не найдено
-  }
-
-  const handleDragStart = event => {
-    const { active } = event
-    const { id } = active
-
-    setActiveId(id)
-  }
-
-  function handleDragOver(event) {
-    const { active, over, draggingRect } = event
-    const { id } = active
-
-    // Если over — null (вышли за пределы), или нет ID (DragOverlay), то возвращаемся
-    if (!over) return
-    const { id: overId } = over
-
-    // 💡 Используем columns вместо items
-    const activeContainerId = findContainer(id, columns)
-    const overContainerId = findContainer(overId, columns)
-
-    if (
-      !activeContainerId ||
-      !overContainerId ||
-      activeContainerId === overContainerId
-    ) {
-      return
-    }
-
-    setColumns(prevColumns => {
-      // Находим реальные объекты колонок
-      const activeContainer = prevColumns.find(c => c.id === activeContainerId)
-      const overContainer = prevColumns.find(c => c.id === overContainerId)
-
-      if (!activeContainer || !overContainer) return prevColumns
-
-      // Массивы карточек
-      const activeItems = activeContainer.cards
-      const overItems = overContainer.cards
-
-      // Находим индексы (findIndex, т.к. это массив объектов)
-      const activeIndex = activeItems.findIndex(item => item.id === id)
-      const overIndex = overItems.findIndex(item => item.id === overId)
-
-      // 💡 Находим объект перемещаемой карточки
-      const movedItem = activeItems[activeIndex]
-
-      // --- Логика определения нового индекса (сложная, из dnd-kit) ---
-      let newIndex
-      // Если бросаем на саму колонку (пустую или нет)
-      if (overContainer.id === overId) {
-        newIndex = overItems.length
+      if (serverThreadColumn) {
+        finalColumns = [
+          serverThreadColumn,
+          ...columns.filter(col => col.id !== DEFAULT_THREAD_COLUMN.id),
+        ]
       } else {
-        // Если бросаем на другую карточку
-        const isBelowLastItem =
-          over &&
-          overIndex === overItems.length - 1 &&
-          draggingRect?.offsetTop > over.rect?.offsetTop + over.rect.height
-
-        const modifier = isBelowLastItem ? 1 : 0
-
-        newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length
+        // Если колонки есть, но thread отсутствует, добавляем дефолтную Thread первой
+        finalColumns = [DEFAULT_THREAD_COLUMN, ...columns]
       }
+    } else {
+      // Если колонок с сервера нет или они не загружены, всегда показываем Thread
+      finalColumns = [DEFAULT_THREAD_COLUMN]
+    } // 2. Распределение карточек по этим колонкам
+    // Мы выполняем эту логику, только если у нас есть хотя бы одна колонка (Thread) и данные карточек
 
-      // --- Обновление состояния ---
-      return prevColumns.map(column => {
-        if (column.id === activeContainerId) {
-          // 1. Удаляем из активного контейнера
-          return {
-            ...column,
-            cards: column.cards.filter(card => card.id !== active.id),
-          }
-        } else if (column.id === overContainerId) {
-          // 2. Вставляем в целевой контейнер в newIndex
-          const newCards = [...overItems]
-          newCards.splice(newIndex, 0, movedItem) // Вставка в определенную позицию
+    if (finalColumns.length > 0 && cards) {
+      const columnMap = finalColumns.reduce((map, col) => {
+        // Создаем новый объект колонки с пустым массивом cards
+        map[col.id] = { ...col, cards: [] }
+        return map
+      }, {})
 
-          return {
-            ...column,
-            cards: newCards,
-          }
+      cards.forEach(card => {
+        // Карточки без columnId или с columnId, который соответствует Thread
+        const targetId = card.columnId || DEFAULT_THREAD_COLUMN.id
+        const column = columnMap[targetId]
+
+        if (column) {
+          column.cards.push(card)
+        } else {
+          // Если карточка пришла с columnId, которого нет в finalColumns,
+          // по умолчанию отправляем ее в Thread (это предотвращает потерю данных)
+          columnMap[DEFAULT_THREAD_COLUMN.id]?.cards.push(card)
         }
-        return column
-      })
-    })
-  }
+      }) // 3. Обновляем состояние DND, сохраняя порядок
 
-  function handleDragEnd(event) {
-    const { active, over } = event
-    const { id } = active
-
-    // Сброс activeId для DragOverlay
-    setActiveId(null)
-
-    if (!over) return
-
-    const { id: overId } = over
-
-    // 💡 Используем columns
-    // const activeContainerId = findContainer(id, columns)
-    // const overContainerId = findContainer(overId, columns)
-    const activeContainerId = findContainer(id)
-    const overContainerId = findContainer(overId)
-
-    // Если overContainerId отличается, значит, handleDragOver уже переместил данные.
-    // Нам нужно только выполнить сортировку, если контейнер не изменился.
-    if (
-      !activeContainerId ||
-      !overContainerId ||
-      activeContainerId !== overContainerId
-    ) {
-      return
+      const structuredColumns = finalColumns.map(col => columnMap[col.id])
+      setKanbanData(structuredColumns)
+    } else if (finalColumns.length > 0 && !cards) {
+      // Если колонки загружены, но карточки еще нет (или их нет вообще),
+      // просто устанавливаем пустые колонки (включая Thread)
+      setKanbanData(finalColumns.map(col => ({ ...col, cards: [] })))
     }
+  }, [columns, cards])
+  // ------------------------------------------------------------------------
+  // ✅ 3. УСЛОВНЫЙ РЕНДЕР (Идет после ВСЕХ хуков)
+  // ------------------------------------------------------------------------
 
-    // --- Логика СОРТИРОВКИ ВНУТРИ ОДНОГО КОНТЕЙНЕРА ---
-
-    setColumns(prevColumns => {
-      const targetContainer = prevColumns.find(c => c.id === activeContainerId)
-      if (!targetContainer) return prevColumns
-
-      const activeItems = targetContainer.cards
-
-      // Находим индексы (findIndex, т.к. это массив объектов)
-      const activeIndex = activeItems.findIndex(item => item.id === active.id)
-      const overIndex = activeItems.findIndex(item => item.id === overId)
-
-      if (activeIndex !== overIndex) {
-        return prevColumns.map(column => {
-          if (column.id === activeContainerId) {
-            return {
-              ...column,
-              // Используем arrayMove для безопасной сортировки массива объектов
-              cards: arrayMove(activeItems, activeIndex, overIndex),
-            }
-          }
-          return column
-        })
-      }
-      return prevColumns
-    })
-  }
-
+  // 1. Проверка активации Telegram
   if (!activeItemTelegramKey) {
     return (
       <Empty>
@@ -230,10 +160,171 @@ export const Kanban = () => {
     )
   }
 
+  // 2. Проверка загрузки
+  if (
+    isColumnsLoading ||
+    isCardsLoading ||
+    (activeItemId && kanbanData.length === 0)
+  ) {
+    return <div>Loading...</div>
+  }
+
+  // 3. Проверка ошибки
+  if (columnsError || cardsError) {
+    return <div>Error loading data.</div>
+  }
+
+  // ------------------------------------------------------------------------
+  // 4. ЛОГИКА КОМПОНЕНТА (НЕ ХУКИ)
+  // ------------------------------------------------------------------------
+
+  // 💡 Используем kanbanData
+  const activeItemData = activeId
+    ? kanbanData.flatMap(col => col.cards).find(card => card.id === activeId)
+    : null
+
+  function findContainer(id) {
+    const container = kanbanData.find(
+      column => column.id === id || column.name === id,
+    )
+    if (container) {
+      return container.id
+    }
+
+    // 2. Ищем ID карточки
+    const columnWithCard = kanbanData.find(column =>
+      column.cards.some(card => card.id === id),
+    )
+
+    if (columnWithCard) {
+      return columnWithCard.id
+    }
+
+    return undefined
+  }
+
+  const handleDragStart = event => {
+    setActiveId(event.active.id)
+  }
+
+  function handleDragOver(event) {
+    const { active, over, draggingRect } = event
+    if (!over) return
+
+    const { id } = active
+    const { id: overId } = over
+
+    // 💡 Используем kanbanData
+    const activeContainerId = findContainer(id)
+    const overContainerId = findContainer(overId)
+
+    if (
+      !activeContainerId ||
+      !overContainerId ||
+      activeContainerId === overContainerId
+    ) {
+      return
+    }
+
+    setKanbanData(prevColumns => {
+      const activeContainer = prevColumns.find(c => c.id === activeContainerId)
+      const overContainer = prevColumns.find(c => c.id === overContainerId)
+
+      if (!activeContainer || !overContainer) return prevColumns
+
+      const activeItems = activeContainer.cards
+      const overItems = overContainer.cards
+      const activeIndex = activeItems.findIndex(item => item.id === id)
+      const overIndex = overItems.findIndex(item => item.id === overId)
+      const movedItem = activeItems[activeIndex]
+
+      let newIndex
+      if (overContainer.id === overId) {
+        newIndex = overItems.length
+      } else {
+        const isBelowLastItem =
+          over &&
+          overIndex === overItems.length - 1 &&
+          draggingRect?.offsetTop > over.rect?.offsetTop + over.rect.height
+
+        const modifier = isBelowLastItem ? 1 : 0
+        newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length
+      }
+
+      // Обновление состояния (перемещение)
+      return prevColumns.map(column => {
+        if (column.id === activeContainerId) {
+          // 1. Удаляем из активного контейнера
+          return {
+            ...column,
+            cards: column.cards.filter(card => card.id !== active.id),
+          }
+        } else if (column.id === overContainerId) {
+          // 2. Вставляем в целевой контейнер
+          const newCards = [...overItems]
+          newCards.splice(newIndex, 0, movedItem)
+
+          return {
+            ...column,
+            cards: newCards,
+          }
+        }
+        return column
+      })
+    })
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    setActiveId(null)
+
+    if (!over) return
+
+    const { id } = active
+    const { id: overId } = over
+
+    const activeContainerId = findContainer(id)
+    const overContainerId = findContainer(overId)
+
+    if (
+      !activeContainerId ||
+      !overContainerId ||
+      activeContainerId !== overContainerId
+    ) {
+      return
+    }
+
+    // Логика СОРТИРОВКИ ВНУТРИ ОДНОГО КОНТЕЙНЕРА
+    setKanbanData(prevColumns => {
+      const targetContainer = prevColumns.find(c => c.id === activeContainerId)
+      if (!targetContainer) return prevColumns
+
+      const activeItems = targetContainer.cards
+      const activeIndex = activeItems.findIndex(item => item.id === active.id)
+      const overIndex = activeItems.findIndex(item => item.id === overId)
+
+      if (activeIndex !== overIndex) {
+        return prevColumns.map(column => {
+          if (column.id === activeContainerId) {
+            return {
+              ...column,
+              cards: arrayMove(activeItems, activeIndex, overIndex),
+            }
+          }
+          return column
+        })
+      }
+      return prevColumns
+    })
+  }
+
+  // ------------------------------------------------------------------------
+  // 5. ОСНОВНОЙ JSX РЕНДЕР
+  // ------------------------------------------------------------------------
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <div className="flex flex-col h-full gap-4">
-        <div className="grid gap-4 md:grid-cols-3 flex-1">
+        <div className="flex flex-row gap-4 flex-1 overflow-x-auto">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCorners}
@@ -241,19 +332,20 @@ export const Kanban = () => {
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
-            {columns.map(column => (
+            {kanbanData?.map(column => (
               <Column
                 key={column.id}
                 id={column.id}
                 name={column.name}
-                cards={column.cards}
+                cards={column.cards} // ✅ cards теперь гарантированно есть благодаря useEffect
+                className="flex-shrink-0 min-w-[380px]"
               />
             ))}
             <DragOverlay>
               {activeItemData ? (
                 <CardComponent
                   id={activeItemData.id}
-                  text={activeItemData.text} // или другой пропс для текста
+                  text={activeItemData.text}
                   isOverlay={true}
                 />
               ) : null}

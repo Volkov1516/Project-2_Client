@@ -1,5 +1,10 @@
 import { useState } from "react"
 import { useUpdateComponentMutation } from "@/features/projects/projectsApiSlice"
+import {
+  useCreateColumnMutation,
+  useUpdateColumnMutation,
+  useDeleteColumnMutation,
+} from "@/features/requests/requestsApiSlice"
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,6 +18,9 @@ export const Settings = ({ activeItemTelegramKey, activeItemId }) => {
   const [columnName, setColumnName] = useState<string>("")
 
   const [updateComponent] = useUpdateComponentMutation()
+  const [createColumn] = useCreateColumnMutation()
+  const [updateColumn] = useUpdateColumnMutation()
+  const [deleteColumn] = useDeleteColumnMutation()
 
   const handleUpdateComponent = async () => {
     try {
@@ -31,6 +39,18 @@ export const Settings = ({ activeItemTelegramKey, activeItemId }) => {
         id: activeItemId,
         data: { telegramKey: "" },
       }).unwrap()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const handleCreateColumn = async () => {
+    try {
+      await createColumn({
+        componentId: activeItemId,
+        name: columnName,
+      }).unwrap()
+      setColumnName("")
     } catch (err) {
       console.error(err)
     }
@@ -103,6 +123,7 @@ export const Settings = ({ activeItemTelegramKey, activeItemId }) => {
                 variant="outline"
                 className="shrink-0"
                 disabled={!columnName}
+                onClick={handleCreateColumn}
               >
                 Add Column
               </Button>
