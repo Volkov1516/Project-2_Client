@@ -5,13 +5,14 @@ import { counterSlice } from "../features/counter/counterSlice"
 import { quotesApiSlice } from "../features/quotes/quotesApiSlice"
 import { projectsApiSlice } from "../features/projects/projectsApiSlice"
 import projectsReducer from "../features/projects/projectsSlice"
-
+import { requestsApiSlice } from "@/features/requests/requestsApiSlice"
 // Комбинируем slices
 const rootReducer = combineSlices(
   counterSlice,
   quotesApiSlice,
   { projects: projectsReducer }, // добавляем локальный slice
   projectsApiSlice, // добавляем RTK Query slice
+  requestsApiSlice,
 )
 
 // Тип состояния
@@ -24,7 +25,8 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware()
         .concat(quotesApiSlice.middleware)
-        .concat(projectsApiSlice.middleware), // добавляем middleware RTK Query для проектов
+        .concat(projectsApiSlice.middleware)
+        .concat(requestsApiSlice.middleware),
     preloadedState,
   })
 
