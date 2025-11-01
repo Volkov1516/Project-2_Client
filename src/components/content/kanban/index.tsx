@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
+import { io } from "socket.io-client"
 import {
   selectActiveItemId,
   selectActiveItemTelegramKey,
@@ -74,6 +75,45 @@ export const Kanban = () => {
   // Хуки useState
   const [kanbanData, setKanbanData] = useState([]) // Основное состояние DND
   const [activeId, setActiveId] = useState()
+
+  useEffect(() => {
+    const socket = io("http://localhost:3000"); // Replace with your server URL
+
+    socket.on("newCard", (newCard) => {
+      console.log("New card received:", newCard);
+      // TODO: Update kanbanData with the new card
+      setKanbanData(prevKanbanData => {
+        const updatedKanbanData = prevKanbanData.map(column => {
+          if (column.id === newCard.columnId || (!newCard.columnId && column.id === DEFAULT_THREAD_COLUMN.id)) {
+            return {
+              ...column,
+              cards: [...column.cards, newCard]
+            };
+          }
+          return column;
+        });
+        // If the new card's column doesn't exist, or it's a thread card and the thread column doesn't exist, add it to the default thread column.
+        const targetColumnExists = updatedKanbanData.some(column => column.id === newCard.columnId || (!newCard.columnId && column.id === DEFAULT_THREAD_COLUMN.id));
+        if (!targetColumnExists) {
+          return updatedKanbanData.map(column => {
+            if (column.id === DEFAULT_THREAD_COLUMN.id) {
+              return {
+                ...column,
+                cards: [...column.cards, newCard]
+              };
+            }
+            return column;
+          });
+        }
+
+        return updatedKanbanData;
+      });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   // Хуки Dnd-kit
   const sensors = useSensors(
