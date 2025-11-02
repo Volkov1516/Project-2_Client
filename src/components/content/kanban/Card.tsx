@@ -3,9 +3,7 @@ import { CSS } from "@dnd-kit/utilities"
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardFooter,
 } from "@/components/ui/card"
 import { useSortable } from "@dnd-kit/sortable"
 
@@ -28,13 +26,10 @@ export const CardComponent = ({ id, text, isOverlay = false }) => {
       {...listeners}
       className="@container/card cursor-grab hover:shadow-lg transition-shadow"
     >
-      <CardHeader>
-        <CardTitle>Request #1234</CardTitle>
-        <CardDescription>Thomas Anderson | 21.10.2025</CardDescription>
-      </CardHeader>
       <CardContent>
         <p>{text}</p>
       </CardContent>
+      <CardFooter className="text-sm text-muted-foreground">Thomas Anderson | 21.10.2025</CardFooter>
     </Card>
   )
 }
