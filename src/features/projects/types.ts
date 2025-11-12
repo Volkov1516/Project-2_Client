@@ -14,10 +14,11 @@ export type Component = {
 }
 
 export type ProjectsState = {
-  selectedProjectId: number | null
-  activeItemId: string | null
-  activeItemTelegramKey?: string | null
-}
+  selectedProjectId: number | null;
+  activeItemId: string | null;
+  activeItemTelegramKey?: string | null;
+  activeItemType?: 'project' | 'kanban' | 'component' | null;
+};
 
 export type UpdateProjectArgs = {
   id: string

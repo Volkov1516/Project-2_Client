@@ -4,6 +4,7 @@ import { io } from "socket.io-client"
 import {
   selectActiveItemId,
   selectActiveItemTelegramKey,
+  selectActiveItemType,
 } from "@/features/projects/projectsSlice"
 import {
   DndContext,
@@ -18,6 +19,8 @@ import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 
 import { Column } from "./Column"
 import { CardComponent } from "./Card"
+
+import { ChartAreaInteractive } from "@/components/chart/MockChart"
 
 import {
   // ✅ ИСПРАВЛЕНИЕ: Используем более точное имя хука (если оно было изменено в requestsApiSlice)
@@ -34,6 +37,9 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { Kanban as Icon } from "lucide-react"
+import { ChartPieInteractive } from "@/components/chart/MockPieChart"
+import { ChartRadarInteractive } from "@/components/chart/MockRadarChart"
+import { ChartTooltipDefault } from "@/components/chart/MockTooltip"
 
 // 💡 КОНСТАНТА ДЛЯ КОЛОНКИ ПО УМОЛЧАНИЮ
 const DEFAULT_THREAD_COLUMN = {
@@ -50,6 +56,7 @@ export const Kanban = () => {
   // Хуки Redux
   const activeItemId = useSelector(selectActiveItemId)
   const activeItemTelegramKey = useSelector(selectActiveItemTelegramKey)
+  const activeItemType = useSelector(selectActiveItemType)
 
   // Хуки RTK Query
   const {
@@ -183,6 +190,37 @@ export const Kanban = () => {
   // ------------------------------------------------------------------------
 
   // 1. Проверка активации Telegram
+  if (activeItemType === "project") {
+    return (
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+        <ChartAreaInteractive />
+        <div className="flex flex-row gap-4 flex-1">
+        <ChartTooltipDefault className="w-1/3" />
+          <ChartPieInteractive className="w-1/3" />
+          <ChartRadarInteractive className="w-1/3" />
+        </div>
+      </div>
+    );
+  }
+
+  // 1.1. Проверка для компонента: если есть telegramKey, рендерим Kanban, иначе заглушку.
+  if (activeItemType === "component" && !activeItemTelegramKey) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Icon />
+          </EmptyMedia>
+          <EmptyTitle>Component Selected</EmptyTitle>
+          <EmptyDescription>
+            This is a placeholder for component-specific content.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
+  // 1.2. Общая проверка для Kanban: если нет telegramKey, показываем заглушку.
   if (!activeItemTelegramKey) {
     return (
       <Empty>
@@ -197,7 +235,7 @@ export const Kanban = () => {
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
-    )
+    );
   }
 
   // 2. Проверка загрузки
@@ -363,6 +401,7 @@ export const Kanban = () => {
   // ------------------------------------------------------------------------
   return (
     <div className="flex-1 overflow-y-auto p-4">
+      {/* This is where the Kanban board will be rendered when activeItemType is not 'project' or 'component' */}
       <div className="flex flex-col h-full gap-4">
         <div className="flex flex-row gap-4 flex-1 overflow-x-auto">
           <DndContext
@@ -377,7 +416,7 @@ export const Kanban = () => {
                 key={column.id}
                 id={column.id}
                 name={column.name}
-                cards={column.cards} // ✅ cards теперь гарантированно есть благодаря useEffect
+                cards={column.cards}
                 className="flex-shrink-0 min-w-[380px]"
               />
             ))}

@@ -46,7 +46,7 @@ export const Projects = () => {
   return (
     <SidebarGroup className="overflow-y-auto">
       <Label />
-      <SidebarGroupContent className="overflow-x-auto">
+      <SidebarGroupContent className="overflow-x-auto pb-4">
         <SidebarMenu>
           {outputTree.map((item, index) => (
             <Tree key={index} item={item} activeItemId={activeItemId} />
