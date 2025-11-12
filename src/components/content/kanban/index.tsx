@@ -88,10 +88,9 @@ export const Kanban = () => {
 
     socket.on("newCard", (newCard) => {
       console.log("New card received:", newCard);
-      // TODO: Update kanbanData with the new card
       setKanbanData(prevKanbanData => {
         const updatedKanbanData = prevKanbanData.map(column => {
-          if (column.id === newCard.columnId || (!newCard.columnId && column.id === DEFAULT_THREAD_COLUMN.id)) {
+          if (column.id === newCard.columnId) {
             return {
               ...column,
               cards: [...column.cards, newCard]
@@ -99,8 +98,9 @@ export const Kanban = () => {
           }
           return column;
         });
-        // If the new card's column doesn't exist, or it's a thread card and the thread column doesn't exist, add it to the default thread column.
-        const targetColumnExists = updatedKanbanData.some(column => column.id === newCard.columnId || (!newCard.columnId && column.id === DEFAULT_THREAD_COLUMN.id));
+
+        // If the new card's column doesn't exist, add it to the default thread column.
+        const targetColumnExists = updatedKanbanData.some(column => column.id === newCard.columnId);
         if (!targetColumnExists) {
           return updatedKanbanData.map(column => {
             if (column.id === DEFAULT_THREAD_COLUMN.id) {
@@ -165,15 +165,15 @@ export const Kanban = () => {
 
       cards.forEach(card => {
         // Карточки без columnId или с columnId, который соответствует Thread
-        const targetId = card.columnId || DEFAULT_THREAD_COLUMN.id
-        const column = columnMap[targetId]
+        const targetId = card.status || DEFAULT_THREAD_COLUMN.id;
+        const column = columnMap[targetId];
 
         if (column) {
-          column.cards.push(card)
+          column.cards.push(card);
         } else {
           // Если карточка пришла с columnId, которого нет в finalColumns,
           // по умолчанию отправляем ее в Thread (это предотвращает потерю данных)
-          columnMap[DEFAULT_THREAD_COLUMN.id]?.cards.push(card)
+          columnMap[DEFAULT_THREAD_COLUMN.id]?.cards.push(card);
         }
       }) // 3. Обновляем состояние DND, сохраняя порядок
 
@@ -371,6 +371,27 @@ export const Kanban = () => {
     ) {
       return
     }
+
+    // console.log(`Card ${active.id} moved from ${activeContainerId} to ${overContainerId}`);
+
+    fetch("http://localhost:3000/cards/status", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cardId: active.id,
+        newColumnId: overContainerId,
+        componentId: activeItemId,
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Card status updated on server:", data);
+      })
+      .catch(error => {
+        console.error("Error updating card status:", error);
+      });
 
     // Логика СОРТИРОВКИ ВНУТРИ ОДНОГО КОНТЕЙНЕРА
     setKanbanData(prevColumns => {
