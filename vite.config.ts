@@ -8,7 +8,9 @@ import tsconfigPaths from "vite-tsconfig-paths" // <--- Импортируем �
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfigPaths()],
-
+  build: {
+    outDir: "dist", // Указываем, что сборка должна быть в папке dist
+  },
   server: {
     open: true,
   },
