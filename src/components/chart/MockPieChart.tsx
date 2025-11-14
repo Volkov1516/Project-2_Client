@@ -49,23 +49,23 @@ const chartConfig = {
   },
   january: {
     label: "January",
-    color: "var(--chart-1)",
+    color: "hsl(var(--foreground))",
   },
   february: {
     label: "February",
-    color: "var(--chart-2)",
+    color: "hsl(var(--muted-foreground))",
   },
   march: {
     label: "March",
-    color: "var(--chart-3)",
+    color: "hsl(var(--border))",
   },
   april: {
     label: "April",
-    color: "var(--chart-4)",
+    color: "hsl(var(--secondary))",
   },
   may: {
     label: "May",
-    color: "var(--chart-5)",
+    color: "hsl(var(--accent))",
   },
 } satisfies ChartConfig
 
@@ -74,10 +74,10 @@ export function ChartPieInteractive({ className }: { className?: string }) {
   const [activeMonth, setActiveMonth] = React.useState(desktopData[0].month)
 
   const activeIndex = React.useMemo(
-    () => desktopData.findIndex((item) => item.month === activeMonth),
-    [activeMonth]
+    () => desktopData.findIndex(item => item.month === activeMonth),
+    [activeMonth],
   )
-  const months = React.useMemo(() => desktopData.map((item) => item.month), [])
+  const months = React.useMemo(() => desktopData.map(item => item.month), [])
 
   return (
     <Card data-chart={id} className={cn("flex flex-col", className)}>
@@ -95,7 +95,7 @@ export function ChartPieInteractive({ className }: { className?: string }) {
             <SelectValue placeholder="Select month" />
           </SelectTrigger>
           <SelectContent align="end" className="rounded-xl">
-            {months.map((key) => {
+            {months.map(key => {
               const config = chartConfig[key as keyof typeof chartConfig]
 
               if (!config) {

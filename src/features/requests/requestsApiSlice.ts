@@ -3,7 +3,9 @@ import type { Column, UpdateColumnArgs, Card } from "./types"
 
 export const requestsApiSlice = createApi({
   reducerPath: "requestsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://project-2-server-das9.onrender.com",
+  }),
   // Добавляем tagTypes
   tagTypes: ["Column", "Card"],
   endpoints: builder => ({

@@ -3,7 +3,9 @@ import type { Project, Component, UpdateProjectArgs } from "./types"
 
 export const projectsApiSlice = createApi({
   reducerPath: "projectsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://project-2-server-das9.onrender.com",
+  }),
   // Добавляем tagTypes
   tagTypes: ["Project", "Component"],
   endpoints: builder => ({

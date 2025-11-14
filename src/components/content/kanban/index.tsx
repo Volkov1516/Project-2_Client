@@ -84,43 +84,45 @@ export const Kanban = () => {
   const [activeId, setActiveId] = useState()
 
   useEffect(() => {
-    const socket = io("http://localhost:3000"); // Replace with your server URL
+    const socket = io("https://project-2-server-das9.onrender.com") // Replace with your server URL
 
-    socket.on("newCard", (newCard) => {
-      console.log("New card received:", newCard);
+    socket.on("newCard", newCard => {
+      console.log("New card received:", newCard)
       setKanbanData(prevKanbanData => {
         const updatedKanbanData = prevKanbanData.map(column => {
           if (column.id === newCard.columnId) {
             return {
               ...column,
-              cards: [...column.cards, newCard]
-            };
+              cards: [...column.cards, newCard],
+            }
           }
-          return column;
-        });
+          return column
+        })
 
         // If the new card's column doesn't exist, add it to the default thread column.
-        const targetColumnExists = updatedKanbanData.some(column => column.id === newCard.columnId);
+        const targetColumnExists = updatedKanbanData.some(
+          column => column.id === newCard.columnId,
+        )
         if (!targetColumnExists) {
           return updatedKanbanData.map(column => {
             if (column.id === DEFAULT_THREAD_COLUMN.id) {
               return {
                 ...column,
-                cards: [...column.cards, newCard]
-              };
+                cards: [...column.cards, newCard],
+              }
             }
-            return column;
-          });
+            return column
+          })
         }
 
-        return updatedKanbanData;
-      });
-    });
+        return updatedKanbanData
+      })
+    })
 
     return () => {
-      socket.disconnect();
-    };
-  }, []);
+      socket.disconnect()
+    }
+  }, [])
 
   // Хуки Dnd-kit
   const sensors = useSensors(
@@ -165,15 +167,15 @@ export const Kanban = () => {
 
       cards.forEach(card => {
         // Карточки без columnId или с columnId, который соответствует Thread
-        const targetId = card.status || DEFAULT_THREAD_COLUMN.id;
-        const column = columnMap[targetId];
+        const targetId = card.status || DEFAULT_THREAD_COLUMN.id
+        const column = columnMap[targetId]
 
         if (column) {
-          column.cards.push(card);
+          column.cards.push(card)
         } else {
           // Если карточка пришла с columnId, которого нет в finalColumns,
           // по умолчанию отправляем ее в Thread (это предотвращает потерю данных)
-          columnMap[DEFAULT_THREAD_COLUMN.id]?.cards.push(card);
+          columnMap[DEFAULT_THREAD_COLUMN.id]?.cards.push(card)
         }
       }) // 3. Обновляем состояние DND, сохраняя порядок
 
@@ -195,12 +197,12 @@ export const Kanban = () => {
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
         <ChartAreaInteractive />
         <div className="flex flex-row gap-4 flex-1">
-        <ChartTooltipDefault className="w-1/3" />
+          <ChartTooltipDefault className="w-1/3" />
           <ChartPieInteractive className="w-1/3" />
           <ChartRadarInteractive className="w-1/3" />
         </div>
       </div>
-    );
+    )
   }
 
   // 1.1. Проверка для компонента: если есть telegramKey, рендерим Kanban, иначе заглушку.
@@ -217,7 +219,7 @@ export const Kanban = () => {
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
-    );
+    )
   }
 
   // 1.2. Общая проверка для Kanban: если нет telegramKey, показываем заглушку.
@@ -235,7 +237,7 @@ export const Kanban = () => {
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
-    );
+    )
   }
 
   // 2. Проверка загрузки
@@ -374,7 +376,7 @@ export const Kanban = () => {
 
     // console.log(`Card ${active.id} moved from ${activeContainerId} to ${overContainerId}`);
 
-    fetch("http://localhost:3000/cards/status", {
+    fetch("https://project-2-server-das9.onrender.com/cards/status", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -387,11 +389,11 @@ export const Kanban = () => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("Card status updated on server:", data);
+        console.log("Card status updated on server:", data)
       })
       .catch(error => {
-        console.error("Error updating card status:", error);
-      });
+        console.error("Error updating card status:", error)
+      })
 
     // Логика СОРТИРОВКИ ВНУТРИ ОДНОГО КОНТЕЙНЕРА
     setKanbanData(prevColumns => {
