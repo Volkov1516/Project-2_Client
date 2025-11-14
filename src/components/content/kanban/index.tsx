@@ -41,8 +41,23 @@ import { ChartPieInteractive } from "@/components/chart/MockPieChart"
 import { ChartRadarInteractive } from "@/components/chart/MockRadarChart"
 import { ChartTooltipDefault } from "@/components/chart/MockTooltip"
 
+interface KanbanCard {
+  id: string;
+  columnId: string;
+  text: string;
+  status?: string;
+}
+
+interface KanbanColumn {
+  id: string;
+  name: string;
+  cards: KanbanCard[];
+  componentId?: string;
+  position?: number;
+}
+
 // 💡 КОНСТАНТА ДЛЯ КОЛОНКИ ПО УМОЛЧАНИЮ
-const DEFAULT_THREAD_COLUMN = {
+const DEFAULT_THREAD_COLUMN: KanbanColumn = {
   id: "thread",
   name: "Thread",
   cards: [],
@@ -80,16 +95,16 @@ export const Kanban = () => {
   )
 
   // Хуки useState
-  const [kanbanData, setKanbanData] = useState([]) // Основное состояние DND
-  const [activeId, setActiveId] = useState()
+  const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]) // Основное состояние DND
+  const [activeId, setActiveId] = useState<string | null>(null)
 
   useEffect(() => {
     const socket = io("https://project-2-server-das9.onrender.com") // Replace with your server URL
 
-    socket.on("newCard", newCard => {
+    socket.on("newCard", (newCard: KanbanCard) => {
       console.log("New card received:", newCard)
       setKanbanData(prevKanbanData => {
-        const updatedKanbanData = prevKanbanData.map(column => {
+        const updatedKanbanData = prevKanbanData.map((column: KanbanColumn) => {
           if (column.id === newCard.columnId) {
             return {
               ...column,
@@ -101,10 +116,10 @@ export const Kanban = () => {
 
         // If the new card's column doesn't exist, add it to the default thread column.
         const targetColumnExists = updatedKanbanData.some(
-          column => column.id === newCard.columnId,
+          (column: KanbanColumn) => column.id === newCard.columnId,
         )
         if (!targetColumnExists) {
-          return updatedKanbanData.map(column => {
+          return updatedKanbanData.map((column: KanbanColumn) => {
             if (column.id === DEFAULT_THREAD_COLUMN.id) {
               return {
                 ...column,
@@ -136,17 +151,17 @@ export const Kanban = () => {
   // ✅ 2. useEffect для синхронизации и структурирования данных
   // ------------------------------------------------------------------------
   useEffect(() => {
-    let finalColumns = [] // 1. Определяем, какие колонки мы будем использовать
+    let finalColumns: KanbanColumn[] = [] // 1. Определяем, какие колонки мы будем использовать
     if (columns && columns.length > 0) {
       // Ищем, есть ли колонка "thread" среди данных с сервера
       const serverThreadColumn = columns.find(
-        col => col.id === DEFAULT_THREAD_COLUMN.id,
+        (col: KanbanColumn) => col.id === DEFAULT_THREAD_COLUMN.id,
       ) // Если колонка "thread" пришла с сервера, используем ее и добавляем остальные
 
       if (serverThreadColumn) {
         finalColumns = [
           serverThreadColumn,
-          ...columns.filter(col => col.id !== DEFAULT_THREAD_COLUMN.id),
+          ...columns.filter((col: KanbanColumn) => col.id !== DEFAULT_THREAD_COLUMN.id),
         ]
       } else {
         // Если колонки есть, но thread отсутствует, добавляем дефолтную Thread первой
@@ -159,13 +174,13 @@ export const Kanban = () => {
     // Мы выполняем эту логику, только если у нас есть хотя бы одна колонка (Thread) и данные карточек
 
     if (finalColumns.length > 0 && cards) {
-      const columnMap = finalColumns.reduce((map, col) => {
+      const columnMap: Record<string, KanbanColumn> = finalColumns.reduce((map, col: KanbanColumn) => {
         // Создаем новый объект колонки с пустым массивом cards
         map[col.id] = { ...col, cards: [] }
         return map
       }, {})
 
-      cards.forEach(card => {
+      cards.forEach((card: KanbanCard) => {
         // Карточки без columnId или с columnId, который соответствует Thread
         const targetId = card.status || DEFAULT_THREAD_COLUMN.id
         const column = columnMap[targetId]
@@ -179,12 +194,12 @@ export const Kanban = () => {
         }
       }) // 3. Обновляем состояние DND, сохраняя порядок
 
-      const structuredColumns = finalColumns.map(col => columnMap[col.id])
+      const structuredColumns = finalColumns.map((col: KanbanColumn) => columnMap[col.id])
       setKanbanData(structuredColumns)
     } else if (finalColumns.length > 0 && !cards) {
       // Если колонки загружены, но карточки еще нет (или их нет вообще),
       // просто устанавливаем пустые колонки (включая Thread)
-      setKanbanData(finalColumns.map(col => ({ ...col, cards: [] })))
+      setKanbanData(finalColumns.map((col: KanbanColumn) => ({ ...col, cards: [] })))
     }
   }, [columns, cards])
   // ------------------------------------------------------------------------
@@ -263,17 +278,17 @@ export const Kanban = () => {
     ? kanbanData.flatMap(col => col.cards).find(card => card.id === activeId)
     : null
 
-  function findContainer(id) {
+  function findContainer(id: string) {
     const container = kanbanData.find(
-      column => column.id === id || column.name === id,
+      (column: KanbanColumn) => column.id === id || column.name === id,
     )
     if (container) {
       return container.id
     }
 
     // 2. Ищем ID карточки
-    const columnWithCard = kanbanData.find(column =>
-      column.cards.some(card => card.id === id),
+    const columnWithCard = kanbanData.find((column: KanbanColumn) =>
+      column.cards.some((card: KanbanCard) => card.id === id),
     )
 
     if (columnWithCard) {
@@ -283,11 +298,11 @@ export const Kanban = () => {
     return undefined
   }
 
-  const handleDragStart = event => {
+  const handleDragStart = (event: any) => {
     setActiveId(event.active.id)
   }
 
-  function handleDragOver(event) {
+  function handleDragOver(event: any) {
     const { active, over, draggingRect } = event
     if (!over) return
 
@@ -295,8 +310,8 @@ export const Kanban = () => {
     const { id: overId } = over
 
     // 💡 Используем kanbanData
-    const activeContainerId = findContainer(id)
-    const overContainerId = findContainer(overId)
+    const activeContainerId = findContainer(id as string)
+    const overContainerId = findContainer(overId as string)
 
     if (
       !activeContainerId ||
@@ -314,8 +329,8 @@ export const Kanban = () => {
 
       const activeItems = activeContainer.cards
       const overItems = overContainer.cards
-      const activeIndex = activeItems.findIndex(item => item.id === id)
-      const overIndex = overItems.findIndex(item => item.id === overId)
+      const activeIndex = activeItems.findIndex((item: KanbanCard) => item.id === id)
+      const overIndex = overItems.findIndex((item: KanbanCard) => item.id === overId)
       const movedItem = activeItems[activeIndex]
 
       let newIndex
@@ -337,7 +352,7 @@ export const Kanban = () => {
           // 1. Удаляем из активного контейнера
           return {
             ...column,
-            cards: column.cards.filter(card => card.id !== active.id),
+            cards: column.cards.filter((card: KanbanCard) => card.id !== active.id),
           }
         } else if (column.id === overContainerId) {
           // 2. Вставляем в целевой контейнер
@@ -354,7 +369,7 @@ export const Kanban = () => {
     })
   }
 
-  function handleDragEnd(event) {
+  function handleDragEnd(event: any) {
     const { active, over } = event
     setActiveId(null)
 
@@ -363,8 +378,8 @@ export const Kanban = () => {
     const { id } = active
     const { id: overId } = over
 
-    const activeContainerId = findContainer(id)
-    const overContainerId = findContainer(overId)
+    const activeContainerId = findContainer(id as string)
+    const overContainerId = findContainer(overId as string)
 
     if (
       !activeContainerId ||
@@ -401,8 +416,8 @@ export const Kanban = () => {
       if (!targetContainer) return prevColumns
 
       const activeItems = targetContainer.cards
-      const activeIndex = activeItems.findIndex(item => item.id === active.id)
-      const overIndex = activeItems.findIndex(item => item.id === overId)
+      const activeIndex = activeItems.findIndex((item: KanbanCard) => item.id === active.id)
+      const overIndex = activeItems.findIndex((item: KanbanCard) => item.id === overId)
 
       if (activeIndex !== overIndex) {
         return prevColumns.map(column => {
@@ -434,7 +449,7 @@ export const Kanban = () => {
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
-            {kanbanData?.map(column => (
+            {kanbanData?.map((column: KanbanColumn) => (
               <Column
                 key={column.id}
                 id={column.id}

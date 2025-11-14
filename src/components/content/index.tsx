@@ -10,8 +10,16 @@ import { Kanban } from "./kanban"
 import { Settings } from "./Settings"
 import { Members } from "./Members"
 import { Analytics } from "./Analytics"
+import type { ComponentType } from "@/types/component"
 
-const VIEWS = {
+type ViewComponents = {
+  kanban: React.FC
+  analytics: React.FC
+  members: React.FC
+  settings: React.FC<{activeItemTelegramKey: ComponentType["telegramkey"], activeItemId: ComponentType["id"]}>
+}
+
+const VIEWS: ViewComponents = {
   kanban: Kanban,
   analytics: Analytics,
   members: Members,

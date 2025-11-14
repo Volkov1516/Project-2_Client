@@ -3,7 +3,14 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 
 import { CardComponent } from "./Card"
 
-export const Column = ({ id, name, cards, className }) => {
+interface ColumnProps {
+  id: string
+  name: string
+  cards: { id: string; text: string }[]
+  className?: string
+}
+
+export const Column = ({ id, name, cards, className }: ColumnProps) => {
   const { setNodeRef } = useDroppable({ id })
 
   return (
@@ -18,7 +25,7 @@ export const Column = ({ id, name, cards, className }) => {
           ref={setNodeRef}
           className="bg-muted/50 rounded-xl flex-1 p-2 flex flex-col gap-2 overflow-y-auto"
         >
-          {cards?.map(card => (
+          {cards?.map((card: { id: string; text: string }) => (
             <CardComponent key={card.id} id={card.id} text={card.text} />
           ))}
         </div>

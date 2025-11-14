@@ -1,17 +1,10 @@
 // features/projects/types.ts
-export type Project = {
-  id: number
-  ownerId: string
-  name: string
-}
+import type { ProjectType } from "@/types/project"
+import type { ComponentType } from "@/types/component"
 
-export type Component = {
-  id: number
-  projectId: string
-  parentId?: string
-  telegramKey?: string
-  name: string
-}
+export type Project = ProjectType
+
+export type Component = ComponentType
 
 export type ProjectsState = {
   selectedProjectId: number | null;
@@ -20,7 +13,12 @@ export type ProjectsState = {
   activeItemType?: 'project' | 'kanban' | 'component' | null;
 };
 
-export type UpdateProjectArgs = {
+export type UpdateProjectArgsType = {
   id: string
   data: Partial<Project>
+}
+
+export type UpdateComponentArgsType = {
+  id: string
+  data: Partial<Component>
 }

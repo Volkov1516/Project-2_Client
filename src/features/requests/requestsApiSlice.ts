@@ -10,17 +10,12 @@ export const requestsApiSlice = createApi({
   tagTypes: ["Column", "Card"],
   endpoints: builder => ({
     getColumns: builder.query<Column[], string>({
-      query: componentId => `/columns/by-component/${componentId}`,
-      providesTags: (result, error, componentId) => [
-        { type: "Column", id: componentId },
-        ...(result
-          ? result.map(column => ({ type: "Column" as const, id: column.id }))
-          : []),
-      ],
+      query: componentId => `/columns?componentId=${componentId}`,
+      providesTags: (_result, _error, componentId) => [{ type: "Column", id: componentId }],
     }),
     getColumn: builder.query<Column, string>({
       query: id => `/columns/${id}`,
-      providesTags: (result, error, id) => [{ type: "Column", id }],
+      providesTags: (_result, _error, id) => [{ type: "Column", id }],
     }),
     createColumn: builder.mutation<Column, Partial<Column>>({
       query: data => ({
@@ -44,17 +39,11 @@ export const requestsApiSlice = createApi({
         url: `/columns/${id}`,
         method: "DELETE",
       }),
-      // После успешного удаления делаем тег недействительным
-      invalidatesTags: ["Column"],
+      invalidatesTags: (_result, _error, id) => [{ type: "Column", id }],
     }),
     getCards: builder.query<Card[], string>({
-      query: componentId => `/cards/by-component/${componentId}`,
-      providesTags: (result, error, componentId) => [
-        { type: "Card", id: componentId },
-        ...(result
-          ? result.map(card => ({ type: "Card" as const, id: card.id }))
-          : []),
-      ],
+      query: componentId => `/cards?componentId=${componentId}`,
+      providesTags: (_result, _error, componentId) => [{ type: "Card", id: componentId }],
     }),
   }),
 })

@@ -10,8 +10,13 @@ import {
 import { Separator } from "../ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export const Header = ({ activeView, setActiveView }) => {
-  const handleTabChange = value => {
+interface HeaderProps {
+  activeView: string
+  setActiveView: (view: string) => void
+}
+
+export const Header = ({ activeView, setActiveView }: HeaderProps) => {
+  const handleTabChange = (value: string) => {
     setActiveView(value)
   }
 

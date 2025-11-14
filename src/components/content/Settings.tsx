@@ -2,8 +2,6 @@ import { useState } from "react"
 import { useUpdateComponentMutation } from "@/features/projects/projectsApiSlice"
 import {
   useCreateColumnMutation,
-  useUpdateColumnMutation,
-  useDeleteColumnMutation,
 } from "@/features/requests/requestsApiSlice"
 
 import { Input } from "@/components/ui/input"
@@ -13,14 +11,20 @@ import { Separator } from "@/components/ui/separator"
 
 import { Pencil, Trash, Grip, Check } from "lucide-react"
 
-export const Settings = ({ activeItemTelegramKey, activeItemId }) => {
+interface SettingsProps {
+  activeItemTelegramKey: string
+  activeItemId: string
+}
+
+export const Settings = ({
+  activeItemTelegramKey,
+  activeItemId,
+}: SettingsProps) => {
   const [telegramKey, setTelegramKey] = useState<string>(activeItemTelegramKey)
   const [columnName, setColumnName] = useState<string>("")
 
   const [updateComponent] = useUpdateComponentMutation()
   const [createColumn] = useCreateColumnMutation()
-  const [updateColumn] = useUpdateColumnMutation()
-  const [deleteColumn] = useDeleteColumnMutation()
 
   const handleUpdateComponent = async () => {
     try {
@@ -141,7 +145,11 @@ export const Settings = ({ activeItemTelegramKey, activeItemId }) => {
   )
 }
 
-const ColumnItem = ({ name }) => (
+interface ColumnItemProps {
+  name: string
+}
+
+const ColumnItem = ({ name }: ColumnItemProps) => (
   <div className="flex items-center justify-between p-1 bg-muted/50 rounded-md">
     <div>
       <Button variant="ghost" size="icon" aria-label="Delete">

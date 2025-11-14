@@ -7,7 +7,13 @@ import {
 } from "@/components/ui/card"
 import { useSortable } from "@dnd-kit/sortable"
 
-export const CardComponent = ({ id, text, isOverlay = false }) => {
+interface CardComponentProps {
+  id: string
+  text: string
+  isOverlay?: boolean
+}
+
+export const CardComponent = ({ id, text, isOverlay = false }: CardComponentProps) => {
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id })
 

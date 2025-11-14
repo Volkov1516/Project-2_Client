@@ -40,7 +40,7 @@ export const Projects = () => {
     return <div>Error...</div>
   }
 
-  const finalStructure = buildProjectTree(projects, components)
+  const finalStructure = buildProjectTree(projects || [], components)
   const outputTree = buildSidebarTree(finalStructure)
 
   return (

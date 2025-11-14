@@ -10,14 +10,24 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Component, Folder, FolderKanban } from "lucide-react"
+import type { ComponentType } from "@/types/component"
+import type { ProjectType } from "@/types/project"
 
-export const Tree = ({ item, activeItemId }) => {
+type TreeItem = ProjectType & { type: "project" } | ComponentType & { type: "component" }
+
+interface TreeProps {
+  item: TreeItem | TreeItem[]
+  activeItemId: string | null
+}
+
+export const Tree = ({ item, activeItemId }: TreeProps) => {
   const dispatch = useDispatch()
-  let info, items
+  let info: TreeItem
+  let items: TreeItem[]
 
   if (Array.isArray(item)) {
     info = item[0]
-    items = item.slice(1)
+    items = item.slice(1) as TreeItem[]
   } else {
     info = item
     items = []
@@ -26,7 +36,7 @@ export const Tree = ({ item, activeItemId }) => {
   const { id, name, type, projectId } = info
 
   const handleItemClick = () => {
-    dispatch(setActiveItem({ id, telegramKey: info.telegramKey, type }));
+    dispatch(setActiveItem({ id, telegramKey: (info as ComponentType).telegramkey, type }))
   }
   const isActive = id === activeItemId
 

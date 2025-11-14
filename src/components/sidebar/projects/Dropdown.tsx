@@ -30,7 +30,13 @@ import { Input } from "@/components/ui/input"
 import { Label as InputLabel } from "@/components/ui/label"
 import { MoreHorizontal, Trash2, Star, Plus, Pencil } from "lucide-react"
 
-export const Dropdown = ({ id, type, projectId }) => {
+interface DropdownProps {
+  id: string
+  type: 'project' | 'component'
+  projectId: string
+}
+
+export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [createName, setCreateName] = useState<string>("My Component")
@@ -44,9 +50,9 @@ export const Dropdown = ({ id, type, projectId }) => {
   const [updateComponent] = useUpdateComponentMutation()
   const [deleteComponent] = useDeleteComponentMutation()
 
-  const toggleDelete = open => setIsDeleteOpen(open)
-  const toggleCreate = open => setIsCreateOpen(open)
-  const toggleUpdate = open => setIsUpdateOpen(open)
+  const toggleDelete = (open: boolean) => setIsDeleteOpen(open)
+  const toggleCreate = (open: boolean) => setIsCreateOpen(open)
+  const toggleUpdate = (open: boolean) => setIsUpdateOpen(open)
 
   const targetProjectId = type === "project" ? id : projectId
 
@@ -58,7 +64,7 @@ export const Dropdown = ({ id, type, projectId }) => {
     setUpdateName(e.target.value)
   }
 
-  const handleDelete = (id, type) => {
+  const handleDelete = (id: string, type: 'project' | 'component') => {
     if (type === "project") {
       handleDeleteProject(id)
     } else {
@@ -68,7 +74,7 @@ export const Dropdown = ({ id, type, projectId }) => {
     setIsDeleteOpen(false)
   }
 
-  const handleUpdate = (id, type) => {
+  const handleUpdate = (id: string, type: 'project' | 'component') => {
     if (type === "project") {
       handleUpdateProject(id)
     } else {

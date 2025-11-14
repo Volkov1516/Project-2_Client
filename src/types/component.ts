@@ -1,9 +1,10 @@
 export type ComponentType = {
   id: string
   projectid: string
-  parentid?: string
+  parentid?: string | null
   name: string
   telegramkey?: string | null
+  children?: ComponentTreeNodeType[]
 }
 
 export type ComponentsType = ComponentType[]

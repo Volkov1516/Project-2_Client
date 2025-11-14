@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import type { Project, Component, UpdateProjectArgs } from "./types"
+import type { Project, Component, UpdateProjectArgsType, UpdateComponentArgsType } from "./types"
 
 export const projectsApiSlice = createApi({
   reducerPath: "projectsApi",
@@ -16,7 +16,7 @@ export const projectsApiSlice = createApi({
     }),
     getProjectById: builder.query<Project, string>({
       query: id => `/projects/${id}`,
-      providesTags: (result, error, id) => [{ type: "Project", id }],
+      providesTags: (_result, _error, id) => [{ type: "Project", id }],
     }),
     createProject: builder.mutation<Project, Partial<Project>>({
       query: data => ({
@@ -27,7 +27,7 @@ export const projectsApiSlice = createApi({
       // После успешного создания проекта делаем тег "Project" недействительным
       invalidatesTags: ["Project"],
     }),
-    updateProject: builder.mutation<Project, UpdateProjectArgs>({
+    updateProject: builder.mutation<Project, UpdateProjectArgsType>({
       query: ({ id, data }) => ({
         url: `/projects/${id}`,
         method: "PATCH",
@@ -58,7 +58,7 @@ export const projectsApiSlice = createApi({
       // После успешного создания проекта делаем тег "Project" недействительным
       invalidatesTags: ["Component"],
     }),
-    updateComponent: builder.mutation<Component, UpdateProjectArgs>({
+    updateComponent: builder.mutation<Component, UpdateComponentArgsType>({
       query: ({ id, data }) => ({
         url: `/components/${id}`,
         method: "PATCH",
