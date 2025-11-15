@@ -17,6 +17,17 @@ import {
   SidebarMenu,
 } from "@/components/ui/sidebar"
 import { Spinner } from "@/components/ui/spinner"
+import { Button } from "@/components/ui/button"
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty"
+
+import { TriangleAlert } from "lucide-react"
 
 export const Projects = () => {
   const activeItemId = useSelector(selectActiveItemId)
@@ -46,13 +57,33 @@ export const Projects = () => {
   return (
     <SidebarGroup className="overflow-y-auto">
       <Label />
-      <SidebarGroupContent className="overflow-x-auto pb-4">
-        <SidebarMenu>
-          {outputTree.map((item, index) => (
-            <Tree key={index} item={item} activeItemId={activeItemId} />
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
+      {projects && projects.length > 0 ? (
+        <SidebarGroupContent className="overflow-x-auto pb-4">
+          <SidebarMenu>
+            {outputTree.map((item, index) => (
+              <Tree key={index} item={item} activeItemId={activeItemId} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
+      ) : (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <TriangleAlert />
+            </EmptyMedia>
+            <EmptyTitle>No Projects Yet</EmptyTitle>
+            <EmptyDescription>
+              You haven&apos;t created any projects yet. Get started by creating
+              your first project.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <div className="flex gap-2">
+              <Button>Create Project</Button>
+            </div>
+          </EmptyContent>
+        </Empty>
+      )}
     </SidebarGroup>
   )
 }
