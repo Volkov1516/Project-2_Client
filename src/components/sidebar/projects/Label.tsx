@@ -1,6 +1,8 @@
 import { useState, type ChangeEvent } from "react"
 import { useCreateProjectMutation } from "../../../features/projects/projectsApiSlice"
 
+import { auth } from "@/firebase"
+
 import { SidebarGroupLabel, SidebarGroupAction } from "@/components/ui/sidebar"
 import {
   Dialog,
@@ -31,7 +33,7 @@ export const Label = () => {
     try {
       await createProject({
         name: name.trim(),
-        ownerId: "Admin",
+        ownerId: auth.currentUser?.uid,
       }).unwrap()
 
       setOpen(false)
