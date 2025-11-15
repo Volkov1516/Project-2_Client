@@ -3,13 +3,13 @@ import * as path from "node:path"
 import { defineConfig } from "vitest/config"
 import packageJson from "./package.json" with { type: "json" }
 import tailwindcss from "@tailwindcss/vite"
-import tsconfigPaths from "vite-tsconfig-paths" // <--- Импортируем плагин
+import tsconfigPaths from "vite-tsconfig-paths"
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfigPaths()],
+  assetsInclude: ['**/*.svg'],
   build: {
-    outDir: "dist", // Указываем, что сборка должна быть в папке dist
+    outDir: "dist",
   },
   server: {
     open: true,

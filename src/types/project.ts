@@ -11,3 +11,8 @@ export type ProjectWithComponentsType = ProjectType & {
 }
 
 export type ProjectMapType = Map<string, ProjectWithComponentsType>
+
+export type ProjectUpdateArgsType = {
+  id: string
+  data: Partial<ProjectType>
+}

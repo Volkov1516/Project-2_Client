@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useUpdateComponentMutation } from "@/features/projects/projectsApiSlice"
+import { useUpdateComponentMutation } from "@/features/components/componentsApiSlice"
 import {
   useCreateColumnMutation,
 } from "@/features/requests/requestsApiSlice"

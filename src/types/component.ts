@@ -14,3 +14,8 @@ export type ComponentTreeNodeType = ComponentType & {
 }
 
 export type ComponentMapType = Record<string, ComponentTreeNodeType>
+
+export type ComponentUpdateArgsType = {
+  id: string
+  data: Partial<ComponentType>
+}

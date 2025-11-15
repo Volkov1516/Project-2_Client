@@ -22,7 +22,6 @@ export const LoginForm = () => {
     const provider = new GoogleAuthProvider()
     try {
       await signInWithPopup(auth, provider)
-      console.log("User signed in with Google!")
     } catch (err: any) {
       console.error("Error signing in with Google:", err.message)
     }

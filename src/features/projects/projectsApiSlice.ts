@@ -1,39 +1,35 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import type { Project, Component, UpdateProjectArgsType, UpdateComponentArgsType } from "./types"
+import type { ProjectType, ProjectUpdateArgsType } from "@/types/project"
 
 export const projectsApiSlice = createApi({
   reducerPath: "projectsApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://project-2-server-das9.onrender.com",
   }),
-  // Добавляем tagTypes
-  tagTypes: ["Project", "Component"],
+  tagTypes: ["Project"],
   endpoints: builder => ({
-    getProjects: builder.query<Project[], void>({
-      query: () => `/projects`,
-      // Добавляем providesTags, чтобы пометить данные тегом "Project"
+    getProjects: builder.query<ProjectType[], string>({
+      query: uid => `/projects?ownerId=${uid}`,
       providesTags: ["Project"],
     }),
-    getProjectById: builder.query<Project, string>({
+    getProjectById: builder.query<ProjectType, string>({
       query: id => `/projects/${id}`,
       providesTags: (_result, _error, id) => [{ type: "Project", id }],
     }),
-    createProject: builder.mutation<Project, Partial<Project>>({
+    createProject: builder.mutation<ProjectType, Partial<ProjectType>>({
       query: data => ({
         url: "/projects",
         method: "POST",
         body: data,
       }),
-      // После успешного создания проекта делаем тег "Project" недействительным
       invalidatesTags: ["Project"],
     }),
-    updateProject: builder.mutation<Project, UpdateProjectArgsType>({
+    updateProject: builder.mutation<ProjectType, ProjectUpdateArgsType>({
       query: ({ id, data }) => ({
         url: `/projects/${id}`,
         method: "PATCH",
         body: data,
       }),
-      // После успешного обновления делаем тег недействительным
       invalidatesTags: ["Project"],
     }),
     deleteProject: builder.mutation<void, string>({
@@ -41,39 +37,7 @@ export const projectsApiSlice = createApi({
         url: `/projects/${id}`,
         method: "DELETE",
       }),
-      // После успешного удаления делаем тег недействительным
       invalidatesTags: ["Project"],
-    }),
-    getComponents: builder.query<Component[], void>({
-      query: () => `/components`,
-      // Добавляем providesTags, чтобы пометить данные тегом "Project"
-      providesTags: ["Component"],
-    }),
-    createComponent: builder.mutation<Component, Partial<Component>>({
-      query: data => ({
-        url: "/components",
-        method: "POST",
-        body: data,
-      }),
-      // После успешного создания проекта делаем тег "Project" недействительным
-      invalidatesTags: ["Component"],
-    }),
-    updateComponent: builder.mutation<Component, UpdateComponentArgsType>({
-      query: ({ id, data }) => ({
-        url: `/components/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
-      // После успешного обновления делаем тег недействительным
-      invalidatesTags: ["Component"],
-    }),
-    deleteComponent: builder.mutation<void, string>({
-      query: id => ({
-        url: `/components/${id}`,
-        method: "DELETE",
-      }),
-      // После успешного удаления делаем тег недействительным
-      invalidatesTags: ["Component"],
     }),
   }),
 })
@@ -84,8 +48,4 @@ export const {
   useCreateProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
-  useGetComponentsQuery,
-  useCreateComponentMutation,
-  useUpdateComponentMutation,
-  useDeleteComponentMutation,
 } = projectsApiSlice

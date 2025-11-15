@@ -1,10 +1,12 @@
 import { useSelector } from "react-redux"
-import { selectActiveItemId } from "../../../features/projects/projectsSlice"
+import { selectActiveItemId } from "@/features/projects/projectsSlice"
+import { useGetProjectsQuery } from "@/features/projects/projectsApiSlice"
+import { useGetComponentsQuery } from "@/features/components/componentsApiSlice"
 
-import {
-  useGetProjectsQuery,
-  useGetComponentsQuery,
-} from "../../../features/projects/projectsApiSlice"
+import { auth } from "@/firebase"
+
+import { buildProjectTree } from "../../../utils/buildProjectTree"
+import { buildSidebarTree } from "../../../utils/buildSidebarTree"
 
 import { Label } from "./Label"
 import { Tree } from "./Tree"
@@ -14,9 +16,7 @@ import {
   SidebarGroupContent,
   SidebarMenu,
 } from "@/components/ui/sidebar"
-
-import { buildProjectTree } from "../../../utils/buildProjectTree"
-import { buildSidebarTree } from "../../../utils/buildSidebarTree"
+import { Spinner } from "@/components/ui/spinner"
 
 export const Projects = () => {
   const activeItemId = useSelector(selectActiveItemId)
@@ -24,7 +24,7 @@ export const Projects = () => {
     data: projects,
     isLoading: isProjectLoading,
     error: projectError,
-  } = useGetProjectsQuery()
+  } = useGetProjectsQuery(auth.currentUser?.uid)
 
   const {
     data: components,
@@ -33,7 +33,7 @@ export const Projects = () => {
   } = useGetComponentsQuery()
 
   if (isProjectLoading || isComponentsLoading) {
-    return <div>Loading...</div>
+    return <Spinner />
   }
 
   if (projectError || componentsError) {

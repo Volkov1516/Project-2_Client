@@ -3,10 +3,8 @@ import { useState, type ChangeEvent } from "react"
 import {
   useUpdateProjectMutation,
   useDeleteProjectMutation,
-  useCreateComponentMutation,
-  useUpdateComponentMutation,
-  useDeleteComponentMutation,
 } from "../../../features/projects/projectsApiSlice"
+import { useCreateComponentMutation, useUpdateComponentMutation, useDeleteComponentMutation } from "@/features/components/componentsApiSlice"
 
 import { SidebarMenuAction } from "@/components/ui/sidebar"
 import {

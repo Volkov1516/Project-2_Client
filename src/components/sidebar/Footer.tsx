@@ -1,20 +1,20 @@
+import { auth } from "../../firebase"
+
 import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
 } from "../ui/sidebar"
+import {DropdownMenuTrigger, DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "../ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 import { Settings, Info, Search, LogOut, Bell, ReceiptText, User } from "lucide-react"
-import {DropdownMenuTrigger, DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "../ui/dropdown-menu"
-import { auth } from "../../firebase" // Import auth
 
 export const Footer = () => {
   const handleLogout = async () => {
     try {
       await auth.signOut()
-      console.log("User logged out successfully!")
     } catch (error) {
       console.error("Error logging out:", error)
     }
@@ -83,7 +83,7 @@ export const Footer = () => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}> {/* Add onClick handler */}
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
