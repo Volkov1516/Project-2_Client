@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { auth } from './firebase'
 
 import { SidebarProvider, SidebarInset } from "./components/ui/sidebar"
-
 import { AppSidebar } from "./components/sidebar"
 import { AppContent } from "./components/content"
-import { LoginForm } from './components/auth' // Import LoginForm
+import { LoginForm } from "./components/auth"
+import { Spinner } from "@/components/ui/spinner"
 
 export const App = () => {
   const [user, setUser] = useState<User | null>(null)
@@ -24,7 +24,7 @@ export const App = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen text-lg">
-        Loading authentication state...
+        <Spinner />
       </div>
     )
   }

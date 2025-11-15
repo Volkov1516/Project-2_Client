@@ -1,3 +1,6 @@
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { auth } from "../../firebase"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -13,32 +16,20 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
-import { auth } from "../../firebase"
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  // Removed email, password, and error states
-  // Removed handleEmailSignIn function
-
+export const LoginForm = () => {
   const handleGoogleSignIn = async () => {
-    // setError(null) // This line was removed
     const provider = new GoogleAuthProvider()
     try {
       await signInWithPopup(auth, provider)
-      // User signed in successfully with Google
       console.log("User signed in with Google!")
     } catch (err: any) {
-      // setError(err.message) // This line was removed
       console.error("Error signing in with Google:", err.message)
     }
   }
 
-
   return (
-    <div className="flex justify-center items-center h-screen w-full" {...props}>
+    <div className="flex justify-center items-center h-screen w-full">
       <Card className="w-full max-w-sm transform-none">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
@@ -47,8 +38,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Removed error display */}
-          <form> {/* Removed onSubmit handler */}
+          <form>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -57,7 +47,6 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
-                  // Removed value and onChange
                 />
               </Field>
               <Field>
@@ -74,12 +63,11 @@ export function LoginForm({
                   id="password"
                   type="password"
                   required
-                  // Removed value and onChange
                 />
               </Field>
               <Field>
-                <Button type="button" className="w-full">Login</Button> {/* Changed to type="button" */}
-                <Button variant="outline" type="button" onClick={handleGoogleSignIn} className="w-full mt-2"> {/* Add onClick handler for Google */}
+                <Button type="button" className="w-full">Login</Button>
+                <Button type="button" className="w-full mt-2" variant="outline" onClick={handleGoogleSignIn}>
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center mt-4">
