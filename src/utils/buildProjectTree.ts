@@ -17,19 +17,29 @@ const buildComponentTree = (
   const rootComponents: ComponentTreeNodeType[] = []
 
   components.forEach((component: ComponentType) => {
-    componentMap[component.id] = {
+    const componentIdString = String(component.id)
+
+    componentMap[componentIdString] = {
       ...component,
       children: [],
     } as ComponentTreeNodeType
   })
 
   Object.values(componentMap).forEach(component => {
-    const parentId = component.parentid
+    const parentId = component.parent_id
 
-    if (parentId && componentMap[parentId]) {
-      componentMap[parentId].children.push(component)
+    if (parentId !== null && parentId !== undefined) {
+      const parentIdString = String(parentId)
+
+      if (componentMap[parentIdString]) {
+        componentMap[parentIdString].children.push(
+          component as ComponentTreeNodeType,
+        )
+      } else {
+        rootComponents.push(component as ComponentTreeNodeType)
+      }
     } else {
-      rootComponents.push(component)
+      rootComponents.push(component as ComponentTreeNodeType)
     }
   })
 
@@ -43,12 +53,15 @@ const mergeProjectsAndComponents = (
   const projectMap: ProjectMapType = new Map()
 
   projects.forEach(project => {
-    projectMap.set(project.id, { ...project, components: [] })
+    const projectIdString = String(project.id)
+    projectMap.set(projectIdString, { ...project, components: [] })
   })
 
   componentTree.forEach(rootComponent => {
-    const projectId = rootComponent.projectid
-    const project = projectMap.get(projectId)
+    const projectId = rootComponent.project_id
+
+    const projectIdString = String(projectId)
+    const project = projectMap.get(projectIdString)
 
     if (project) {
       project.components.push(rootComponent)

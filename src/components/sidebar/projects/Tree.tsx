@@ -13,7 +13,9 @@ import { Component, Folder, FolderKanban } from "lucide-react"
 import type { ComponentType } from "@/types/component"
 import type { ProjectType } from "@/types/project"
 
-type TreeItem = ProjectType & { type: "project" } | ComponentType & { type: "component" }
+type TreeItem =
+  | (ProjectType & { type: "project" })
+  | (ComponentType & { type: "component" })
 
 interface TreeProps {
   item: TreeItem | TreeItem[]
@@ -36,7 +38,13 @@ export const Tree = ({ item, activeItemId }: TreeProps) => {
   const { id, name, type, projectId } = info
 
   const handleItemClick = () => {
-    dispatch(setActiveItem({ id, telegramKey: (info as ComponentType).telegramkey, type }))
+    dispatch(
+      setActiveItem({
+        id,
+        telegramKey: (info as ComponentType).telegramkey,
+        type,
+      }),
+    )
   }
   const isActive = id === activeItemId
 

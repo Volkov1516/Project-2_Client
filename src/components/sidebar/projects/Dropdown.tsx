@@ -91,7 +91,7 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
     try {
       await updateProject({ id, data: { name: updateName } }).unwrap()
     } catch (err) {
-      console.error("Ошибка при обновлении проекта:", err)
+      console.error("Error updating project:", err)
     }
   }
 
@@ -99,7 +99,7 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
     try {
       await deleteProject(id).unwrap()
     } catch (err) {
-      console.error("Ошибка при удалении проекта:", err)
+      console.error("Error deleting project:", err)
     }
   }
 
@@ -111,7 +111,7 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
         name: createName.trim(),
       }).unwrap()
     } catch (err) {
-      console.error(err)
+      console.error("Error creating component:", err)
     }
 
     setIsCreateOpen(false)
@@ -122,7 +122,7 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
     try {
       await updateComponent({ id, data: { name: updateName } }).unwrap()
     } catch (err) {
-      console.error(err)
+      console.error("Error updating component:", err)
     }
   }
 
@@ -130,7 +130,7 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
     try {
       await deleteComponent(id).unwrap()
     } catch (err) {
-      console.error(err)
+      console.error("Error deleting component:", err)
     }
   }
 

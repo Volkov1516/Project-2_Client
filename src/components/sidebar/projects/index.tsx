@@ -43,8 +43,6 @@ export const Projects = () => {
     error: componentsError,
   } = useGetComponentsQuery()
 
-  console.log(components)
-
   if (isProjectLoading || isComponentsLoading) {
     return <Spinner />
   }

@@ -8,7 +8,7 @@ const transformComponent = (
   const componentInfo = {
     id: component.id,
     name: component.name,
-    telegramKey: component.telegramkey,
+    telegramKey: component.telegram_key,
     type: "component" as const,
     projectId: projectId,
   }
@@ -17,14 +17,16 @@ const transformComponent = (
     return componentInfo
   }
 
-  const transformedChildren = component.children.map((child: ComponentTreeNodeType) =>
-    transformComponent(child, projectId),
+  const transformedChildren = component.children.map(
+    (child: ComponentTreeNodeType) => transformComponent(child, projectId),
   )
 
   return [componentInfo, ...transformedChildren]
 }
 
-export const buildSidebarTree = (finalStructure: ProjectWithComponentsType[]) => {
+export const buildSidebarTree = (
+  finalStructure: ProjectWithComponentsType[],
+) => {
   const tree: (ProjectType | ComponentType)[] = []
 
   finalStructure.forEach((project: ProjectWithComponentsType) => {
@@ -34,17 +36,18 @@ export const buildSidebarTree = (finalStructure: ProjectWithComponentsType[]) =>
       type: "project" as const,
     }
 
-    const transformedComponents = project.components.map((component: ComponentTreeNodeType) =>
-      transformComponent(component, project.id),
+    const transformedComponents = project.components.map(
+      (component: ComponentTreeNodeType) =>
+        transformComponent(component, project.id),
     )
 
     const projectItem: (ProjectType | ComponentType)[] = [
       projectInfo,
-      ...transformedComponents.flat(),
+      ...transformedComponents,
     ]
 
     tree.push(projectItem as any)
   })
 
-  return tree.flat()
+  return tree
 }
