@@ -4,7 +4,11 @@ import {
   useUpdateProjectMutation,
   useDeleteProjectMutation,
 } from "../../../features/projects/projectsApiSlice"
-import { useCreateComponentMutation, useUpdateComponentMutation, useDeleteComponentMutation } from "@/features/components/componentsApiSlice"
+import {
+  useCreateComponentMutation,
+  useUpdateComponentMutation,
+  useDeleteComponentMutation,
+} from "@/features/components/componentsApiSlice"
 
 import { SidebarMenuAction } from "@/components/ui/sidebar"
 import {
@@ -30,7 +34,7 @@ import { MoreHorizontal, Trash2, Star, Plus, Pencil } from "lucide-react"
 
 interface DropdownProps {
   id: string
-  type: 'project' | 'component'
+  type: "project" | "component"
   projectId: string
 }
 
@@ -62,7 +66,7 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
     setUpdateName(e.target.value)
   }
 
-  const handleDelete = (id: string, type: 'project' | 'component') => {
+  const handleDelete = (id: string, type: "project" | "component") => {
     if (type === "project") {
       handleDeleteProject(id)
     } else {
@@ -72,7 +76,7 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
     setIsDeleteOpen(false)
   }
 
-  const handleUpdate = (id: string, type: 'project' | 'component') => {
+  const handleUpdate = (id: string, type: "project" | "component") => {
     if (type === "project") {
       handleUpdateProject(id)
     } else {
@@ -102,9 +106,9 @@ export const Dropdown = ({ id, type, projectId }: DropdownProps) => {
   const handleCreateComponent = async (id: string) => {
     try {
       await createComponent({
-        name: createName.trim(),
-        parentId: type === "component" ? id : null,
         projectId: targetProjectId,
+        parentId: type === "component" ? id : null,
+        name: createName.trim(),
       }).unwrap()
     } catch (err) {
       console.error(err)
