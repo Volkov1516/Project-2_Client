@@ -6,9 +6,20 @@ import {
 } from "../ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
-import { Settings, Info } from "lucide-react"
+import { Settings, Info, Search, LogOut, Bell, ReceiptText, User } from "lucide-react"
+import {DropdownMenuTrigger, DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "../ui/dropdown-menu"
+import { auth } from "../../firebase" // Import auth
 
 export const Footer = () => {
+  const handleLogout = async () => {
+    try {
+      await auth.signOut()
+      console.log("User logged out successfully!")
+    } catch (error) {
+      console.error("Error logging out:", error)
+    }
+  }
+
   return (
     <SidebarFooter>
       <SidebarMenu>
@@ -25,6 +36,14 @@ export const Footer = () => {
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
+          <SidebarMenuButton>
+            <Search />
+            <span>Search</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+        <DropdownMenu>
+        <DropdownMenuTrigger asChild>
           <SidebarMenuButton
             size="lg"
             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -43,6 +62,33 @@ export const Footer = () => {
               </span>
             </div>
           </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            align="end"
+            sideOffset={4}
+          >
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <User />
+                Account
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ReceiptText />
+                Billing
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Bell />
+                Notifications
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}> {/* Add onClick handler */}
+              <LogOut />
+              Log out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarFooter>
