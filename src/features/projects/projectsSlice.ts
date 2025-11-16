@@ -6,6 +6,7 @@ const initialState: ProjectsState = {
   selectedProjectId: null,
   activeItemId: null,
   activeItemTelegramKey: null,
+  activeItemType: null,
 }
 
 export const projectsSlice = createSlice({
@@ -17,11 +18,15 @@ export const projectsSlice = createSlice({
     },
     setActiveItem: (
       state,
-      action: PayloadAction<{ id: string; telegramKey?: string; type?: 'project' | 'kanban' | 'component' }>,
+      action: PayloadAction<{
+        id: string
+        telegramKey?: string
+        type?: "project" | "kanban" | "component"
+      }>,
     ) => {
-      state.activeItemId = action.payload.id;
-      state.activeItemTelegramKey = action.payload.telegramKey;
-      state.activeItemType = action.payload.type;
+      state.activeItemId = action.payload.id
+      state.activeItemTelegramKey = action.payload.telegramKey
+      state.activeItemType = action.payload.type
     },
   },
 })
@@ -34,8 +39,8 @@ export const selectActiveItemId = (state: { projects: ProjectsState }) =>
   state.projects.activeItemId
 
 export const selectActiveItemTelegramKey = (state: {
-  projects: ProjectsState;
-}) => state.projects.activeItemTelegramKey;
+  projects: ProjectsState
+}) => state.projects.activeItemTelegramKey
 
 export const selectActiveItemType = (state: { projects: ProjectsState }) =>
-  state.projects.activeItemType;
+  state.projects.activeItemType

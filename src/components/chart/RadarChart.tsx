@@ -1,8 +1,4 @@
-"use client"
-
-import { TrendingUp } from "lucide-react"
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
-
 import {
   Card,
   CardContent,
@@ -17,9 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { cn } from "@/lib/utils"
-
-export const description = "A radar chart"
+import { TrendingUp } from "lucide-react"
 
 const chartData = [
   { month: "January", desktop: 186 },
@@ -32,16 +26,16 @@ const chartData = [
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
-    color: "var(--chart-1)",
+    label: "Total",
+    color: "var(--chart-5)",
   },
 } satisfies ChartConfig
 
-export function ChartRadarInteractive({ className }: { className?: string }) {
+export function RadarChartComponent() {
   return (
-    <Card className={cn(className)}>
+    <Card className="w-1/3">
       <CardHeader className="items-center pb-4">
-        <CardTitle>Radar Chart</CardTitle>
+        <CardTitle>Users Activity</CardTitle>
         <CardDescription>
           Showing total visitors for the last 6 months
         </CardDescription>

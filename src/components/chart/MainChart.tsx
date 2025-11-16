@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
@@ -127,16 +125,16 @@ const chartConfig = {
     label: "Visitors",
   },
   desktop: {
-    label: "Desktop",
+    label: "Telegram",
     color: "var(--chart-1)",
   },
   mobile: {
-    label: "Mobile",
+    label: "Client",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig
 
-export function ChartAreaInteractive() {
+export function MainChart() {
   const [timeRange, setTimeRange] = React.useState("90d")
 
   const filteredData = chartData.filter(item => {
@@ -157,9 +155,9 @@ export function ChartAreaInteractive() {
     <Card className="pt-0">
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
-          <CardTitle>Area Chart - Interactive</CardTitle>
+          <CardTitle>Total Requests</CardTitle>
           <CardDescription>
-            Showing total visitors for the last 3 months
+            Showing total requests for the last 3 months
           </CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>

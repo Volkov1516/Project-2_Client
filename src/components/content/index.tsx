@@ -3,6 +3,7 @@ import { useSelector } from "react-redux"
 import {
   selectActiveItemId,
   selectActiveItemTelegramKey,
+  selectActiveItemType,
 } from "@/features/projects/projectsSlice"
 
 import { Header } from "./Header"
@@ -20,7 +21,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { Button } from "@/components/ui/button"
-import { PanelsTopLeft, ArrowUpRightIcon, Frown } from "lucide-react"
+import { PanelsTopLeft, ArrowUpRightIcon } from "lucide-react"
 
 type ViewComponents = {
   kanban: React.FC
@@ -44,21 +45,25 @@ export const AppContent = () => {
 
   const activeItemId = useSelector(selectActiveItemId)
   const activeItemTelegramKey = useSelector(selectActiveItemTelegramKey)
+  const activeItemType = useSelector(selectActiveItemType)
+  console.log(activeItemType)
 
   const ActiveComponent = VIEWS[activeView]
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-screen overflow-hidden">
       {activeItemId ? (
         <>
-          <Header activeView={activeView} setActiveView={setActiveView} />
-          {ActiveComponent ? (
-            <ActiveComponent
-              activeItemTelegramKey={activeItemTelegramKey}
-              activeItemId={activeItemId}
-            />
+          {activeItemType === "project" ? (
+            <Analytics />
           ) : (
-            <div className="p-4 text-center text-gray-500">View not found.</div>
+            <>
+              <Header activeView={activeView} setActiveView={setActiveView} />
+              <ActiveComponent
+                activeItemTelegramKey={activeItemTelegramKey}
+                activeItemId={activeItemId}
+              />
+            </>
           )}
         </>
       ) : (

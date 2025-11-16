@@ -20,8 +20,6 @@ import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { Column } from "./Column"
 import { CardComponent } from "./Card"
 
-import { ChartAreaInteractive } from "@/components/chart/MockChart"
-
 import { useGetColumnsQuery } from "@/features/columns/columnsApiSlice"
 import { useGetCardsQuery } from "@/features/cards/cardsApiSlice"
 
@@ -33,8 +31,6 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { Kanban as Icon } from "lucide-react"
-import { ChartRadarInteractive } from "@/components/chart/MockRadarChart"
-import { ChartTooltipDefault } from "@/components/chart/MockTooltip"
 
 interface KanbanCard {
   id: string
@@ -51,7 +47,6 @@ interface KanbanColumn {
   position?: number
 }
 
-// 💡 КОНСТАНТА ДЛЯ КОЛОНКИ ПО УМОЛЧАНИЮ
 const DEFAULT_THREAD_COLUMN: KanbanColumn = {
   id: "thread",
   name: "Thread",
@@ -177,18 +172,6 @@ export const Kanban = () => {
       )
     }
   }, [columns, cards])
-
-  if (activeItemType === "project") {
-    return (
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
-        <ChartAreaInteractive />
-        <div className="flex flex-row gap-4 flex-1">
-          <ChartTooltipDefault className="w-2/3" />
-          <ChartRadarInteractive className="w-1/3" />
-        </div>
-      </div>
-    )
-  }
 
   if (activeItemType === "component" && !activeItemTelegramKey) {
     return (
@@ -404,12 +387,8 @@ export const Kanban = () => {
     })
   }
 
-  // ------------------------------------------------------------------------
-  // 5. ОСНОВНОЙ JSX РЕНДЕР
-  // ------------------------------------------------------------------------
   return (
     <div className="flex-1 overflow-y-auto p-4">
-      {/* This is where the Kanban board will be rendered when activeItemType is not 'project' or 'component' */}
       <div className="flex flex-col h-full gap-4">
         <div className="flex flex-row gap-4 flex-1 overflow-x-auto">
           <DndContext
