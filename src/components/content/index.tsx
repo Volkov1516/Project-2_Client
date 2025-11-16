@@ -47,8 +47,6 @@ export const AppContent = () => {
 
   const ActiveComponent = VIEWS[activeView]
 
-  console.log(activeItemId)
-
   return (
     <div className="flex flex-col h-full">
       {activeItemId ? (

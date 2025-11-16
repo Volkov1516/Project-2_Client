@@ -22,12 +22,8 @@ import { CardComponent } from "./Card"
 
 import { ChartAreaInteractive } from "@/components/chart/MockChart"
 
-import {
-  // ✅ ИСПРАВЛЕНИЕ: Используем более точное имя хука (если оно было изменено в requestsApiSlice)
-  // Если вы не меняли имя в apiSlice, используйте useGetColumnsQuery
-  useGetColumnsQuery,
-  useGetCardsQuery,
-} from "@/features/requests/requestsApiSlice"
+import { useGetColumnsQuery } from "@/features/columns/columnsApiSlice"
+import { useGetCardsQuery } from "@/features/cards/cardsApiSlice"
 
 import {
   Empty,
@@ -63,42 +59,27 @@ const DEFAULT_THREAD_COLUMN: KanbanColumn = {
 }
 
 export const Kanban = () => {
-  // ------------------------------------------------------------------------
-  // ✅ 1. ВСЕ ВЫЗОВЫ ХУКОВ ДОЛЖНЫ БЫТЬ ВНАЧАЛЕ! (Исправляет ошибку Uncaught Error: Rendered fewer hooks)
-  // ------------------------------------------------------------------------
-
-  // Хуки Redux
   const activeItemId = useSelector(selectActiveItemId)
   const activeItemTelegramKey = useSelector(selectActiveItemTelegramKey)
   const activeItemType = useSelector(selectActiveItemType)
 
-  // Хуки RTK Query
   const {
     data: columns,
     isLoading: isColumnsLoading,
     error: columnsError,
-  } = useGetColumnsQuery(
-    // ✅ Добавляем ! для устранения ошибки TypeScript (ts 2345)
-    activeItemId!,
-    { skip: !activeItemId },
-  )
+  } = useGetColumnsQuery(activeItemId!, { skip: !activeItemId })
 
   const {
     data: cards,
     isLoading: isCardsLoading,
     error: cardsError,
-  } = useGetCardsQuery(
-    // ✅ Добавляем ! для устранения ошибки TypeScript (ts 2345)
-    activeItemId!,
-    { skip: !activeItemId },
-  )
+  } = useGetCardsQuery(activeItemId!, { skip: !activeItemId })
 
-  // Хуки useState
-  const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([]) // Основное состояние DND
+  const [kanbanData, setKanbanData] = useState<KanbanColumn[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
 
   useEffect(() => {
-    const socket = io("https://project-2-server-das9.onrender.com") // Replace with your server URL
+    const socket = io("https://project-2-server-das9.onrender.com")
 
     socket.on("newCard", (newCard: KanbanCard) => {
       console.log("New card received:", newCard)
@@ -113,7 +94,6 @@ export const Kanban = () => {
           return column
         })
 
-        // If the new card's column doesn't exist, add it to the default thread column.
         const targetColumnExists = updatedKanbanData.some(
           (column: KanbanColumn) => column.id === newCard.columnId,
         )
@@ -138,7 +118,6 @@ export const Kanban = () => {
     }
   }, [])
 
-  // Хуки Dnd-kit
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -146,16 +125,12 @@ export const Kanban = () => {
     }),
   )
 
-  // ------------------------------------------------------------------------
-  // ✅ 2. useEffect для синхронизации и структурирования данных
-  // ------------------------------------------------------------------------
   useEffect(() => {
-    let finalColumns: KanbanColumn[] = [] // 1. Определяем, какие колонки мы будем использовать
+    let finalColumns: KanbanColumn[] = []
     if (columns && columns.length > 0) {
-      // Ищем, есть ли колонка "thread" среди данных с сервера
       const serverThreadColumn = columns.find(
         (col: KanbanColumn) => col.id === DEFAULT_THREAD_COLUMN.id,
-      ) // Если колонка "thread" пришла с сервера, используем ее и добавляем остальные
+      )
 
       if (serverThreadColumn) {
         finalColumns = [
@@ -165,14 +140,11 @@ export const Kanban = () => {
           ),
         ]
       } else {
-        // Если колонки есть, но thread отсутствует, добавляем дефолтную Thread первой
         finalColumns = [DEFAULT_THREAD_COLUMN, ...columns]
       }
     } else {
-      // Если колонок с сервера нет или они не загружены, всегда показываем Thread
       finalColumns = [DEFAULT_THREAD_COLUMN]
-    } // 2. Распределение карточек по этим колонкам
-    // Мы выполняем эту логику, только если у нас есть хотя бы одна колонка (Thread) и данные карточек
+    }
 
     if (finalColumns.length > 0 && cards) {
       const columnMap: Record<string, KanbanColumn> = finalColumns.reduce(
@@ -185,36 +157,27 @@ export const Kanban = () => {
       )
 
       cards.forEach((card: KanbanCard) => {
-        // Карточки без columnId или с columnId, который соответствует Thread
         const targetId = card.status || DEFAULT_THREAD_COLUMN.id
         const column = columnMap[targetId]
 
         if (column) {
           column.cards.push(card)
         } else {
-          // Если карточка пришла с columnId, которого нет в finalColumns,
-          // по умолчанию отправляем ее в Thread (это предотвращает потерю данных)
           columnMap[DEFAULT_THREAD_COLUMN.id]?.cards.push(card)
         }
-      }) // 3. Обновляем состояние DND, сохраняя порядок
+      })
 
       const structuredColumns = finalColumns.map(
         (col: KanbanColumn) => columnMap[col.id],
       )
       setKanbanData(structuredColumns)
     } else if (finalColumns.length > 0 && !cards) {
-      // Если колонки загружены, но карточки еще нет (или их нет вообще),
-      // просто устанавливаем пустые колонки (включая Thread)
       setKanbanData(
         finalColumns.map((col: KanbanColumn) => ({ ...col, cards: [] })),
       )
     }
   }, [columns, cards])
-  // ------------------------------------------------------------------------
-  // ✅ 3. УСЛОВНЫЙ РЕНДЕР (Идет после ВСЕХ хуков)
-  // ------------------------------------------------------------------------
 
-  // 1. Проверка активации Telegram
   if (activeItemType === "project") {
     return (
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
@@ -227,7 +190,6 @@ export const Kanban = () => {
     )
   }
 
-  // 1.1. Проверка для компонента: если есть telegramKey, рендерим Kanban, иначе заглушку.
   if (activeItemType === "component" && !activeItemTelegramKey) {
     return (
       <Empty>
@@ -244,7 +206,6 @@ export const Kanban = () => {
     )
   }
 
-  // 1.2. Общая проверка для Kanban: если нет telegramKey, показываем заглушку.
   if (!activeItemTelegramKey) {
     return (
       <Empty>
@@ -262,7 +223,6 @@ export const Kanban = () => {
     )
   }
 
-  // 2. Проверка загрузки
   if (
     isColumnsLoading ||
     isCardsLoading ||
@@ -271,16 +231,13 @@ export const Kanban = () => {
     return <div>Loading...</div>
   }
 
-  // 3. Проверка ошибки
+  console.log(columnsError)
+  console.log(cardsError)
+
   if (columnsError || cardsError) {
     return <div>Error loading data.</div>
   }
 
-  // ------------------------------------------------------------------------
-  // 4. ЛОГИКА КОМПОНЕНТА (НЕ ХУКИ)
-  // ------------------------------------------------------------------------
-
-  // 💡 Используем kanbanData
   const activeItemData = activeId
     ? kanbanData.flatMap(col => col.cards).find(card => card.id === activeId)
     : null
@@ -293,7 +250,6 @@ export const Kanban = () => {
       return container.id
     }
 
-    // 2. Ищем ID карточки
     const columnWithCard = kanbanData.find((column: KanbanColumn) =>
       column.cards.some((card: KanbanCard) => card.id === id),
     )
@@ -402,8 +358,6 @@ export const Kanban = () => {
       return
     }
 
-    // console.log(`Card ${active.id} moved from ${activeContainerId} to ${overContainerId}`);
-
     fetch("https://project-2-server-das9.onrender.com/cards/status", {
       method: "PUT",
       headers: {
@@ -423,7 +377,6 @@ export const Kanban = () => {
         console.error("Error updating card status:", error)
       })
 
-    // Логика СОРТИРОВКИ ВНУТРИ ОДНОГО КОНТЕЙНЕРА
     setKanbanData(prevColumns => {
       const targetContainer = prevColumns.find(c => c.id === activeContainerId)
       if (!targetContainer) return prevColumns

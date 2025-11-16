@@ -1,8 +1,8 @@
 import type { ComponentTreeNodeType } from "./component"
 
 export type ProjectType = {
-  id: string
-  name: string
+  id: number
+  name: number
   ownerid?: string
 }
 

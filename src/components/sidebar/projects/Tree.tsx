@@ -41,7 +41,7 @@ export const Tree = ({ item, activeItemId }: TreeProps) => {
     dispatch(
       setActiveItem({
         id,
-        telegramKey: (info as ComponentType).telegramkey,
+        telegramKey: (info as ComponentType).telegramKey,
         type,
       }),
     )

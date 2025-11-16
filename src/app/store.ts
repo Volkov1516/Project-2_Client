@@ -4,13 +4,15 @@ import { setupListeners } from "@reduxjs/toolkit/query"
 import projectsReducer from "../features/projects/projectsSlice"
 import { projectsApiSlice } from "../features/projects/projectsApiSlice"
 import { componentsApiSlice } from "@/features/components/componentsApiSlice"
-import { requestsApiSlice } from "@/features/requests/requestsApiSlice"
+import { columnsApiSlice } from "@/features/columns/columnsApiSlice"
+import { cardsApiSlice } from "@/features/cards/cardsApiSlice"
 
 const rootReducer = combineSlices(
   { projects: projectsReducer },
   projectsApiSlice,
   componentsApiSlice,
-  requestsApiSlice,
+  columnsApiSlice,
+  cardsApiSlice,
 )
 
 export type RootState = ReturnType<typeof rootReducer>
@@ -22,7 +24,8 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
       getDefaultMiddleware()
         .concat(projectsApiSlice.middleware)
         .concat(componentsApiSlice.middleware)
-        .concat(requestsApiSlice.middleware),
+        .concat(columnsApiSlice.middleware)
+        .concat(cardsApiSlice.middleware),
     preloadedState,
   })
 

@@ -1,23 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import type { Column, UpdateColumnArgs, Card } from "./types"
+import type { ColumnType, UpdateColumnArgsType } from "@/types/column"
 
-export const requestsApiSlice = createApi({
-  reducerPath: "requestsApi",
+export const columnsApiSlice = createApi({
+  reducerPath: "columnsApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://project-2-server-das9.onrender.com",
   }),
-  // Добавляем tagTypes
-  tagTypes: ["Column", "Card"],
+  tagTypes: ["Column"],
   endpoints: builder => ({
-    getColumns: builder.query<Column[], string>({
-      query: componentId => `/columns?componentId=${componentId}`,
-      providesTags: (_result, _error, componentId) => [{ type: "Column", id: componentId }],
+    getColumns: builder.query<ColumnType[], string>({
+      query: componentId => `/columns/by-component/${componentId}`,
+      providesTags: (_result, _error, componentId) => [
+        { type: "Column", id: componentId },
+      ],
     }),
-    getColumn: builder.query<Column, string>({
+    getColumn: builder.query<ColumnType, string>({
       query: id => `/columns/${id}`,
       providesTags: (_result, _error, id) => [{ type: "Column", id }],
     }),
-    createColumn: builder.mutation<Column, Partial<Column>>({
+    createColumn: builder.mutation<ColumnType, Partial<ColumnType>>({
       query: data => ({
         url: "/columns",
         method: "POST",
@@ -25,13 +26,12 @@ export const requestsApiSlice = createApi({
       }),
       invalidatesTags: ["Column"],
     }),
-    updateColumn: builder.mutation<Column, UpdateColumnArgs>({
+    updateColumn: builder.mutation<ColumnType, UpdateColumnArgsType>({
       query: ({ id, data }) => ({
         url: `/columns/${id}`,
         method: "PATCH",
         body: data,
       }),
-      // После успешного обновления делаем тег недействительным
       invalidatesTags: ["Column"],
     }),
     deleteColumn: builder.mutation<void, string>({
@@ -41,9 +41,11 @@ export const requestsApiSlice = createApi({
       }),
       invalidatesTags: (_result, _error, id) => [{ type: "Column", id }],
     }),
-    getCards: builder.query<Card[], string>({
+    getCards: builder.query<ColumnType[], string>({
       query: componentId => `/cards?componentId=${componentId}`,
-      providesTags: (_result, _error, componentId) => [{ type: "Card", id: componentId }],
+      providesTags: (_result, _error, componentId) => [
+        { type: "Card", id: componentId },
+      ],
     }),
   }),
 })
@@ -55,4 +57,4 @@ export const {
   useUpdateColumnMutation,
   useDeleteColumnMutation,
   useGetCardsQuery,
-} = requestsApiSlice
+} = columnsApiSlice

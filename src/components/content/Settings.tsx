@@ -1,8 +1,6 @@
 import { useState } from "react"
 import { useUpdateComponentMutation } from "@/features/components/componentsApiSlice"
-import {
-  useCreateColumnMutation,
-} from "@/features/requests/requestsApiSlice"
+import { useCreateColumnMutation } from "@/features/columns/columnsApiSlice"
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -27,6 +25,9 @@ export const Settings = ({
   const [createColumn] = useCreateColumnMutation()
 
   const handleUpdateComponent = async () => {
+    console.log(activeItemId)
+    console.log(telegramKey)
+
     try {
       await updateComponent({
         id: activeItemId,
@@ -53,7 +54,9 @@ export const Settings = ({
       await createColumn({
         componentId: activeItemId,
         name: columnName,
+        position: 0,
       }).unwrap()
+
       setColumnName("")
     } catch (err) {
       console.error(err)
