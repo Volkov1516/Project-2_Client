@@ -7,6 +7,7 @@ const initialState: ProjectsState = {
   activeItemId: null,
   activeItemTelegramKey: null,
   activeItemType: null,
+  activeView: "kanban",
 }
 
 export const projectsSlice = createSlice({
@@ -22,11 +23,15 @@ export const projectsSlice = createSlice({
         id: string
         telegramKey?: string
         type?: "project" | "kanban" | "component"
+        activeView?: "kanban" | "analytics" | "members" | "settings"
       }>,
     ) => {
       state.activeItemId = action.payload.id
       state.activeItemTelegramKey = action.payload.telegramKey
       state.activeItemType = action.payload.type
+      if (action.payload.activeView) {
+        state.activeView = action.payload.activeView
+      }
     },
   },
 })
@@ -44,3 +49,6 @@ export const selectActiveItemTelegramKey = (state: {
 
 export const selectActiveItemType = (state: { projects: ProjectsState }) =>
   state.projects.activeItemType
+
+export const selectActiveView = (state: { projects: ProjectsState }) =>
+  state.projects.activeView

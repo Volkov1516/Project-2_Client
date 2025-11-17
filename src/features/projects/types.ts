@@ -6,12 +6,13 @@ export type Project = ProjectType
 
 export type Component = ComponentType
 
-export type ProjectsState = {
-  selectedProjectId: number | null;
-  activeItemId: string | null;
-  activeItemTelegramKey?: string | null;
-  activeItemType?: 'project' | 'kanban' | 'component' | null;
-};
+interface ProjectsState {
+  selectedProjectId: number | null
+  activeItemId: string | null
+  activeItemTelegramKey: string | null
+  activeItemType: "project" | "kanban" | "component" | null
+  activeView: "kanban" | "analytics" | "members" | "settings"
+}
 
 export type UpdateProjectArgsType = {
   id: string

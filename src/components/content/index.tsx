@@ -1,9 +1,10 @@
-import { useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import {
   selectActiveItemId,
   selectActiveItemTelegramKey,
   selectActiveItemType,
+  selectActiveView,
+  setActiveItem,
 } from "@/features/projects/projectsSlice"
 
 import { Header } from "./Header"
@@ -41,7 +42,8 @@ const VIEWS: ViewComponents = {
 }
 
 export const AppContent = () => {
-  const [activeView, setActiveView] = useState("kanban")
+  const dispatch = useDispatch()
+  const activeView = useSelector(selectActiveView)
 
   const activeItemId = useSelector(selectActiveItemId)
   const activeItemTelegramKey = useSelector(selectActiveItemTelegramKey)
@@ -54,17 +56,11 @@ export const AppContent = () => {
     <div className="flex flex-col h-screen overflow-hidden">
       {activeItemId ? (
         <>
-          {activeItemType === "project" ? (
-            <Analytics />
-          ) : (
-            <>
-              <Header activeView={activeView} setActiveView={setActiveView} />
-              <ActiveComponent
-                activeItemTelegramKey={activeItemTelegramKey}
-                activeItemId={activeItemId}
-              />
-            </>
-          )}
+          <Header activeView={activeView} setActiveView={view => dispatch(setActiveItem({ id: activeItemId!, activeView: view }))} />
+          <ActiveComponent
+            activeItemTelegramKey={activeItemTelegramKey}
+            activeItemId={activeItemId}
+          />
         </>
       ) : (
         <Empty>
