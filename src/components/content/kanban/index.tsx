@@ -77,7 +77,13 @@ export const Kanban = () => {
     const socket = io("https://project-2-server-das9.onrender.com")
 
     socket.on("newCard", (newCard: KanbanCard) => {
+
       console.log("New card received:", newCard)
+      let columnId;
+      if(!newCard.columnId) {
+        columnId === "thread";
+      } 
+
       setKanbanData(prevKanbanData => {
         const updatedKanbanData = prevKanbanData.map((column: KanbanColumn) => {
           if (column.id === newCard.columnId) {
@@ -213,9 +219,6 @@ export const Kanban = () => {
   ) {
     return <div>Loading...</div>
   }
-
-  console.log(columnsError)
-  console.log(cardsError)
 
   if (columnsError || cardsError) {
     return <div>Error loading data.</div>
