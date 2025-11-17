@@ -43,7 +43,7 @@ export const Tree = ({ item, activeItemId }: TreeProps) => {
         id,
         telegramKey: (info as ComponentType).telegramKey,
         type,
-        activeView: "kanban",
+        activeView: type === "project" ? "analytics" : "kanban",
       }),
     )
   }
